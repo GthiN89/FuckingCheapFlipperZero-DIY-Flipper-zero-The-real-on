@@ -4,7 +4,6 @@ You find out why your encoder doesn’t blast real rays, yet not being aware of 
 2: It runs fast.
 No education and a mind of this type and way it learns means that a stupid bug of a middle-schooler, next to impossible being solved is nothing counted weird.
 
-
 I write as it goes, use what i happens to see, with no “something I know is as expected to be right” at all.
 I have no means to measure anything about my code quality other than those two parameters abowe.
 I simply REALLY DON’T KNOW.
