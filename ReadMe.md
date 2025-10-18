@@ -2,7 +2,7 @@
 
 > To the world that punished me by denying me the life I was born for—all for the crime of simply living it for myself instead of for you—this is my middle finger.
 
-Here I will soon put the **complete fucking cheap Flipper Zero project**.
+**fucking cheap Flipper Zero project**.
 
 **LOW-PRICE, HOBBYIST, DIY-FEASIBLE, FORCED-OPEN-SOURCE HARDWARE OF THE FLIPPER ZERO**
 
