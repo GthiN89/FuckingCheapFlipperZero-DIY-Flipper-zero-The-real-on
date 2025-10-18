@@ -239,9 +239,15 @@ static bool subghz_protocol_keeloq_gen_data(
                 (strcmp(instance->manufacture_name, "Mutanco_Mutancode") == 0) ||
                 (strcmp(instance->manufacture_name, "Came_Space") == 0) ||
                 (strcmp(instance->manufacture_name, "Genius_Bravo") == 0) ||
-                (strcmp(instance->manufacture_name, "GSN") == 0)) {
+                (strcmp(instance->manufacture_name, "GSN") == 0) ||
+                (strcmp(instance->manufacture_name, "Rosh") == 0) ||
+                (strcmp(instance->manufacture_name, "Rossi") == 0) ||
+                (strcmp(instance->manufacture_name, "Pecinin") == 0) ||
+                (strcmp(instance->manufacture_name, "Steelmate") == 0)) {
                 // DTM Neo, Came_Space uses 12bit serial -> simple learning
                 // FAAC_RC,XT , Mutanco_Mutancode, Genius_Bravo, GSN 12bit serial -> normal learning
+                // Rosh, Rossi, Pecinin -> 12bit serial - simple learning
+                // Steelmate -> 12bit serial - normal learning
                 decrypt = btn << 28 | (instance->generic.serial & 0xFFF) << 16 |
                           instance->generic.cnt;
             } else if(
@@ -251,9 +257,12 @@ static bool subghz_protocol_keeloq_gen_data(
                 // Nice Smilo, MHouse, JCM -> 8bit serial - simple learning
                 decrypt = btn << 28 | (instance->generic.serial & 0xFF) << 16 |
                           instance->generic.cnt;
-            } else if(strcmp(instance->manufacture_name, "Beninca") == 0) {
+            } else if(
+                (strcmp(instance->manufacture_name, "Beninca") == 0) ||
+                (strcmp(instance->manufacture_name, "Merlin") == 0)) {
                 decrypt = btn << 28 | (0x000) << 16 | instance->generic.cnt;
                 // Beninca / Allmatic -> no serial - simple XOR
+                // Merlin -> no serial - simple XOR
             } else if(strcmp(instance->manufacture_name, "Centurion") == 0) {
                 decrypt = btn << 28 | (0x1CE) << 16 | instance->generic.cnt;
                 // Centurion -> no serial in hop, uses fixed value 0x1CE - normal learning
@@ -578,7 +587,7 @@ SubGhzProtocolStatus
             ret = SubGhzProtocolStatusErrorParserKey;
             break;
         }
-
+        instance->encoder.front = 0; // reset before start
         instance->encoder.is_running = true;
     } while(false);
 
@@ -588,6 +597,7 @@ SubGhzProtocolStatus
 void subghz_protocol_encoder_keeloq_stop(void* context) {
     SubGhzProtocolEncoderKeeloq* instance = context;
     instance->encoder.is_running = false;
+    instance->encoder.front = 0; // reset position
 }
 
 LevelDuration subghz_protocol_encoder_keeloq_yield(void* context) {
@@ -851,6 +861,13 @@ static uint8_t subghz_protocol_keeloq_check_remote_controller_selector(
                     }
                     break;
                 case KEELOQ_LEARNING_SECURE:
+                    bool reset_seed_back = false;
+                    if((strcmp(furi_string_get_cstr(manufacture_code->name), "BFT") == 0)) {
+                        if(instance->seed == 0) {
+                            instance->seed = (fix & 0xFFFFFFF);
+                            reset_seed_back = true;
+                        }
+                    }
                     man = subghz_protocol_keeloq_common_secure_learning(
                         fix, instance->seed, manufacture_code->key);
                     decrypt = subghz_protocol_keeloq_common_decrypt(hop, man);
@@ -858,6 +875,8 @@ static uint8_t subghz_protocol_keeloq_check_remote_controller_selector(
                         *manufacture_name = furi_string_get_cstr(manufacture_code->name);
                         keystore->mfname = *manufacture_name;
                         return 1;
+                    } else {
+                        if(reset_seed_back) instance->seed = 0;
                     }
                     break;
                 case KEELOQ_LEARNING_MAGIC_XOR_TYPE_1:
