@@ -8,9 +8,7 @@ static const NotificationSequence sequence_saved = {
     &message_blue_0,
     &message_green_255,
     &message_red_0,
-    
     &message_delay_100,
-    
     NULL,
 };
 

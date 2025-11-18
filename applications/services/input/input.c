@@ -17,9 +17,9 @@
 #define TAG "InputSrv"
 
 // Debounce configuration from your working version
-#define DEBOUNCE_CONSECUTIVE_READS 5
+#define DEBOUNCE_CONSECUTIVE_READS 2
 #define DEBOUNCE_MAX_TRIES 10
-#define DEBOUNCE_READ_DELAY_MS 5
+#define DEBOUNCE_READ_DELAY_MS 2
 
 // Helper macro for binary logging
 #define BYTE_TO_BIN_PATTERN "%c%c%c%c%c%c%c%c"
@@ -44,12 +44,12 @@ typedef struct {
 
 static InputKey decode_key_from_byte(uint8_t byte) {
     switch(byte) {
-    case 0b00010011: return InputKeyRight;
-    case 0b00100011: return InputKeyOk;
-    case 0b10000011: return InputKeyLeft; 
-    case 0b01000011: return InputKeyUp;
-    case 0b00000111: return InputKeyDown;   
-    case 0b00001011: return InputKeyBack;
+    case 0b00100000: return InputKeyRight;  
+    case 0b00110000: return InputKeyOk;          
+    case 0b00100010: return InputKeyLeft;        
+    case 0b00101000: return InputKeyUp;         
+    case 0b10100000: return InputKeyDown;     
+    case 0b01100000: return InputKeyBack;    
     
     default: return InputKeyMAX;
     }
