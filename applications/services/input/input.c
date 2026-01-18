@@ -45,11 +45,11 @@ typedef struct {
 static InputKey decode_key_from_byte(uint8_t byte) {
     switch(byte) {
     case 0b00100000: return InputKeyRight;  
-    case 0b00110000: return InputKeyOk;          
-    case 0b00100010: return InputKeyLeft;        
-    case 0b00101000: return InputKeyUp;         
-    case 0b10100000: return InputKeyDown;     
-    case 0b01100000: return InputKeyBack;    
+    case 0b00010000: return InputKeyOk;          
+    case 0b00000010: return InputKeyLeft;        
+    case 0b00001000: return InputKeyUp;         
+    case 0b10000000: return InputKeyDown;     
+    case 0b01000000: return InputKeyBack;    
     
     default: return InputKeyMAX;
     }

@@ -14,6 +14,8 @@ extern const NotificationMessage message_display_backlight_off;
 extern const NotificationMessage message_display_backlight_enforce_on;
 extern const NotificationMessage message_display_backlight_enforce_auto;
 
+
+
 // Led ON
 extern const NotificationMessage message_red_255;
 extern const NotificationMessage message_green_255;
@@ -72,6 +74,8 @@ extern const NotificationSequence sequence_reset_blue;
 extern const NotificationSequence sequence_reset_rgb;
 extern const NotificationSequence sequence_reset_display;
 extern const NotificationSequence sequence_reset_sound;
+extern const NotificationSequence sequence_reset_vibro;
+extern NotificationSequence  sequence_set_vibro_on;
 
 
 

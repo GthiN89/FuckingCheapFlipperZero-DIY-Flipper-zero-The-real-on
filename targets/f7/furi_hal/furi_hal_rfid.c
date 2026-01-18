@@ -142,16 +142,14 @@ static void furi_hal_rfid_pins_read(void) {
     furi_hal_gpio_init(&gpio_nfc_irq_rfid_pull, GpioModeOutputPushPull, GpioPullNo, GpioSpeedLow);
     furi_hal_gpio_write(&gpio_nfc_irq_rfid_pull, false);
 
-    // carrier pin to timer out
-    furi_hal_gpio_init_ex(
-        &gpio_rfid_carrier_out,
-        GpioModeAltFunctionPushPull,
-        GpioPullNo,
-        GpioSpeedLow,
-        GpioAltFn1TIM1);
-
-    // comparator in
-    furi_hal_gpio_init(&gpio_rfid_data_in, GpioModeAnalog, GpioPullNo, GpioSpeedLow);
+furi_hal_gpio_init_ex(
+    &gpio_rfid_carrier, 
+    GpioModeAltFunctionPushPull,
+    GpioPullNo,
+    GpioSpeedLow,
+  
+    GpioAltFn2TIM2 
+);
 }
 
 static void furi_hal_rfid_pins_field(void) {

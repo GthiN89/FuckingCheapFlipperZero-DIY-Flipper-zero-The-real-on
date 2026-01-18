@@ -2,7 +2,6 @@
 #include "mf_ultralight_render.h"
 
 #include <nfc/protocols/mf_ultralight/mf_ultralight_poller.h>
-#include <nfc/protocols/mf_classic/mf_classic_poller.h>
 #include <toolbox/pretty_format.h>
 
 #include "nfc/nfc_app_i.h"

@@ -50,13 +50,7 @@ App(
     sources=["commands/subshell_demo.c"],
 )
 
-App(
-    appid="cli_buzzer",
-    apptype=FlipperAppType.PLUGIN,
-    entry_point="cli_buzzer_ep",
-    requires=["cli"],
-    sources=["commands/buzzer.c"],
-)
+
 
 App(
     appid="cli_src",

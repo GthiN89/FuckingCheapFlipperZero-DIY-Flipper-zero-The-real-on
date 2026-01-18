@@ -3,7 +3,7 @@
 
 #define TAG "NfcMfUlCDictAttack"
 
-// TODO: Support card_detected properly
+// TODO: Support card_detected properly -nofl
 
 enum {
     DictAttackStateUserDictInProgress,
@@ -15,48 +15,48 @@ NfcCommand nfc_mf_ultralight_c_dict_attack_worker_callback(NfcGenericEvent event
     furi_assert(event.event_data);
     furi_assert(event.protocol == NfcProtocolMfUltralight);
     NfcCommand command = NfcCommandContinue;
-  //  NfcApp* instance = context;
-   // MfUltralightPollerEvent* poller_event = event.event_data;
+    NfcApp* instance = context;
+    MfUltralightPollerEvent* poller_event = event.event_data;
 
-    // if(poller_event->type == MfUltralightPollerEventTypeRequestMode) {
-    //     poller_event->data->poller_mode = MfUltralightPollerModeDictAttack;
-    //     command = NfcCommandContinue;
-    // } else if(poller_event->type == MfUltralightPollerEventTypeRequestKey) {
-    //     MfUltralightC3DesAuthKey key = {};
-    //     if(keys_dict_get_next_key(
-    //            instance->mf_ultralight_c_dict_context.dict,
-    //            key.data,
-    //            sizeof(MfUltralightC3DesAuthKey))) {
-    //         poller_event->data->key_request_data.key = key;
-    //         poller_event->data->key_request_data.key_provided = true;
-    //         instance->mf_ultralight_c_dict_context.dict_keys_current++;
+    if(poller_event->type == MfUltralightPollerEventTypeRequestMode) {
+        poller_event->data->poller_mode = MfUltralightPollerModeDictAttack;
+        command = NfcCommandContinue;
+    } else if(poller_event->type == MfUltralightPollerEventTypeRequestKey) {
+        MfUltralightC3DesAuthKey key = {};
+        if(keys_dict_get_next_key(
+               instance->mf_ultralight_c_dict_context.dict,
+               key.data,
+               sizeof(MfUltralightC3DesAuthKey))) {
+            poller_event->data->key_request_data.key = key;
+            poller_event->data->key_request_data.key_provided = true;
+            instance->mf_ultralight_c_dict_context.dict_keys_current++;
 
-    //         if(instance->mf_ultralight_c_dict_context.dict_keys_current % 10 == 0) {
-    //             view_dispatcher_send_custom_event(
-    //                 instance->view_dispatcher, NfcCustomEventDictAttackDataUpdate);
-    //         }
-    //     } else {
-    //         poller_event->data->key_request_data.key_provided = false;
-    //     }
-    // } else if(poller_event->type == MfUltralightPollerEventTypeReadSuccess) {
-    //     nfc_device_set_data(
-    //         instance->nfc_device, NfcProtocolMfUltralight, nfc_poller_get_data(instance->poller));
-    //     // Check if this is a successful authentication by looking at the poller's auth context
-    //     const MfUltralightData* data = nfc_poller_get_data(instance->poller);
+            if(instance->mf_ultralight_c_dict_context.dict_keys_current % 10 == 0) {
+                view_dispatcher_send_custom_event(
+                    instance->view_dispatcher, NfcCustomEventDictAttackDataUpdate);
+            }
+        } else {
+            poller_event->data->key_request_data.key_provided = false;
+        }
+    } else if(poller_event->type == MfUltralightPollerEventTypeReadSuccess) {
+        nfc_device_set_data(
+            instance->nfc_device, NfcProtocolMfUltralight, nfc_poller_get_data(instance->poller));
+        // Check if this is a successful authentication by looking at the poller's auth context
+        const MfUltralightData* data = nfc_poller_get_data(instance->poller);
 
-    //     // Update page information
-    //     dict_attack_set_pages_read(instance->dict_attack, data->pages_read);
-    //     dict_attack_set_pages_total(instance->dict_attack, data->pages_total);
+        // Update page information
+        dict_attack_set_pages_read(instance->dict_attack, data->pages_read);
+        dict_attack_set_pages_total(instance->dict_attack, data->pages_total);
 
-    //     if(data->pages_read == data->pages_total) {
-    //         // Full read indicates successful authentication in dict attack mode
-    //         instance->mf_ultralight_c_dict_context.auth_success = true;
-    //         dict_attack_set_key_found(instance->dict_attack, true);
-    //     }
-    //     view_dispatcher_send_custom_event(
-    //         instance->view_dispatcher, NfcCustomEventDictAttackComplete);
-    //     command = NfcCommandStop;
-    // }
+        if(data->pages_read == data->pages_total) {
+            // Full read indicates successful authentication in dict attack mode
+            instance->mf_ultralight_c_dict_context.auth_success = true;
+            dict_attack_set_key_found(instance->dict_attack, true);
+        }
+        view_dispatcher_send_custom_event(
+            instance->view_dispatcher, NfcCustomEventDictAttackComplete);
+        command = NfcCommandStop;
+    }
     return command;
 }
 

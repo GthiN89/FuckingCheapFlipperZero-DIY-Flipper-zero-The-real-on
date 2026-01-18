@@ -60,7 +60,7 @@ void storage_settings_scene_formatting_on_enter(void* context) {
             dialog_ex_set_header(dialog_ex, "Formatted", 5, 10, AlignLeft, AlignTop);
             NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
             notification_message(notification, &sequence_single_vibro);
-            notification_message(notification, &sequence_set_green_255);
+            ////notification_message(notification, &sequence_set_green_255);
             notification_message(notification, &sequence_success);
             furi_record_close(RECORD_NOTIFICATION);
         }

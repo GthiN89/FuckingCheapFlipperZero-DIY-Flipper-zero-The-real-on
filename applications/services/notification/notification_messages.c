@@ -455,6 +455,29 @@ const NotificationSequence sequence_blink_stop = {
     NULL,
 };
 
+// Vibro
+const NotificationMessage message_vibro_on = {
+    .type = NotificationMessageTypeVibro,
+    
+};
+
+const NotificationMessage message_vibro_off = {
+    .type = NotificationMessageTypeVibro,
+   
+};
+
+const NotificationSequence sequence_reset_vibro = {
+    &message_vibro_off,
+    NULL,
+};
+
+// Vibro
+const NotificationSequence sequence_set_vibro_on = {
+    &message_vibro_on,
+    &message_do_not_reset,
+    NULL,
+};
+
 //General
 const NotificationSequence sequence_single_vibro = {
     

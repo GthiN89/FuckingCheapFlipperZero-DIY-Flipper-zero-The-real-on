@@ -48,7 +48,7 @@ int32_t vibro_test_app(void* p) {
         if(event.key == InputKeyOk) {
             if(event.type == InputTypePress) {
                 
-                notification_message(notification, &sequence_set_green_255);
+                ////notification_message(notification, &sequence_set_green_255);
             } else if(event.type == InputTypeRelease) {
                 
                 //notification_message(notification, &sequence_reset_green);
