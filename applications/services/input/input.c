@@ -12,7 +12,7 @@
 
 #define INPUT_PRESS_TICKS 500
 #define INPUT_MAX_PRESS_DURATION_TICKS 5000 // 5 seconds
-#define INPUT_LONG_PRESS_COUNTS 2
+#define INPUT_LONG_PRESS_COUNTS 5
 #define INPUT_THREAD_FLAG_ISR 0x00000001
 #define TAG "InputSrv"
 
@@ -44,12 +44,12 @@ typedef struct {
 
 static InputKey decode_key_from_byte(uint8_t byte) {
     switch(byte) {
-    case 0b00100000: return InputKeyRight;  
-    case 0b00010000: return InputKeyOk;          
-    case 0b00000010: return InputKeyLeft;        
-    case 0b00001000: return InputKeyUp;         
-    case 0b10000000: return InputKeyDown;     
-    case 0b01000000: return InputKeyBack;    
+    case 0b00010011: return InputKeyRight;  
+    case 0b00100011: return InputKeyOk;        
+    case 0b10000011: return InputKeyLeft;         
+    case 0b01000011: return InputKeyUp;       
+    case 0b00001011: return InputKeyDown;     
+    case 0b00000111: return InputKeyBack;    
     
     default: return InputKeyMAX;
     }
@@ -159,7 +159,7 @@ int32_t input_srv(void* p) {
         BYTE_TO_BIN(buttons_released_state));
 
     FURI_LOG_I(TAG, "Input Service Starting in Interrupt Mode");
-    furi_hal_gpio_init(&gpio_button_IRQ, GpioModeInterruptRiseFall, GpioPullUp, GpioSpeedLow);
+    furi_hal_gpio_init(&gpio_button_IRQ, GpioModeInterruptRiseFall, GpioPullDown, GpioSpeedLow);
     furi_hal_gpio_add_int_callback(&gpio_button_IRQ, input_isr, (void*)thread_id);
 
     int counter = 0;

@@ -32,7 +32,7 @@ const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_8m_NFC = {
     .ClockPolarity = LL_SPI_POLARITY_LOW,
     .ClockPhase = LL_SPI_PHASE_2EDGE,
     .NSS = LL_SPI_NSS_SOFT,
-    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV16,
+    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV32,
     .BitOrder = LL_SPI_MSB_FIRST,
     .CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE,
     .CRCPoly = 7,
@@ -68,8 +68,8 @@ const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_BTN = {
     .Mode = LL_SPI_MODE_MASTER,
     .TransferDirection = LL_SPI_FULL_DUPLEX,
     .DataWidth = LL_SPI_DATAWIDTH_8BIT,
-    .ClockPolarity = LL_SPI_POLARITY_LOW,
-    .ClockPhase = LL_SPI_PHASE_1EDGE,
+    .ClockPolarity = LL_SPI_POLARITY_HIGH, // Changed from LOW
+    .ClockPhase = LL_SPI_PHASE_2EDGE,      // Changed from 1EDGE
     .NSS = LL_SPI_NSS_SOFT,
     .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV64,
     .BitOrder = LL_SPI_MSB_FIRST,
@@ -97,7 +97,20 @@ const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_16m = {
     .ClockPolarity = LL_SPI_POLARITY_LOW,
     .ClockPhase = LL_SPI_PHASE_1EDGE,
     .NSS = LL_SPI_NSS_SOFT,
-    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV4,
+    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV8,
+    .BitOrder = LL_SPI_MSB_FIRST,
+    .CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE,
+    .CRCPoly = 7,
+};
+
+const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_LCD_2m = {
+    .Mode = LL_SPI_MODE_MASTER,
+    .TransferDirection = LL_SPI_FULL_DUPLEX,
+    .DataWidth = LL_SPI_DATAWIDTH_8BIT,
+    .ClockPolarity = LL_SPI_POLARITY_LOW,
+    .ClockPhase = LL_SPI_PHASE_1EDGE,
+    .NSS = LL_SPI_NSS_SOFT,
+    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV16,
     .BitOrder = LL_SPI_MSB_FIRST,
     .CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE,
     .CRCPoly = 7,
@@ -110,7 +123,7 @@ const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_2m = {
     .ClockPolarity = LL_SPI_POLARITY_LOW,
     .ClockPhase = LL_SPI_PHASE_1EDGE,
     .NSS = LL_SPI_NSS_SOFT,
-    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV32,
+    .BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV256,
     .BitOrder = LL_SPI_MSB_FIRST,
     .CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE,
     .CRCPoly = 7,
@@ -383,7 +396,7 @@ void furi_hal_spi_bus_handle_display_event_callback(
     FuriHalSpiBusHandleEvent event) {
     // Using the extra slow preset for display
     furi_hal_spi_bus_generic_handle_event_callback(
-        handle, event, &furi_hal_spi_preset_1edge_low_2m);
+        handle, event, &furi_hal_spi_preset_1edge_LCD_2m);
 }
 
 static void furi_hal_spi_bus_handle_sd_fast_event_callback(
@@ -418,7 +431,7 @@ static void furi_hal_spi_bus_handle_external_wrapper_event_callback(
     const FuriHalSpiBusHandle* handle,
     FuriHalSpiBusHandleEvent event) {
     furi_hal_spi_bus_external_handle_event_callback(
-        handle, event, &furi_hal_spi_preset_1edge_low_2m);
+        handle, event, &furi_hal_spi_preset_1edge_LCD_2m);
 }
 
 /* ======================== SPI Bus Handle Definitions ======================= */

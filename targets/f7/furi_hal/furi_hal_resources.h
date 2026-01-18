@@ -204,8 +204,8 @@ extern const GpioPin gpio_button_sr_latch;
 #define VIBRO_GPIO_Port GPIOC
 #define VIBRO_Pin       LL_GPIO_PIN_0
 
-#define iBTN_GPIO_Port GPIOC
-#define iBTN_Pin       LL_GPIO_PIN_0
+#define iBTN_GPIO_Port GPIOB
+#define iBTN_Pin       LL_GPIO_PIN_8
 
 #define USART1_TX_Pin  LL_GPIO_PIN_6
 #define USART1_TX_Port GPIOB
