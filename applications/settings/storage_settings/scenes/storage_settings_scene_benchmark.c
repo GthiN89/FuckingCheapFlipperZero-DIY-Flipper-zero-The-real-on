@@ -116,7 +116,7 @@ static void storage_settings_scene_benchmark(StorageSettings* app) {
 
     NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
     notification_message(notification, &sequence_single_vibro);
-    notification_message(notification, &sequence_set_green_255);
+    ////notification_message(notification, &sequence_set_green_255);
     notification_message(notification, &sequence_success);
     furi_record_close(RECORD_NOTIFICATION);
 

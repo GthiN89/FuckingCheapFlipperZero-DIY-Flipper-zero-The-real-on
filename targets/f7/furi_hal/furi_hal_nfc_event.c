@@ -4,8 +4,6 @@
 
 #define TAG "FuriHalNfcEvent"
 
-
-
 FuriHalNfcEventInternal* furi_hal_nfc_event = NULL;
 
 void furi_hal_nfc_event_init(void) {
@@ -63,8 +61,6 @@ FuriHalNfcEvent furi_hal_nfc_wait_event_common(uint32_t timeout_ms) {
             furi_thread_flags_clear(FuriHalNfcEventInternalTypeIrq);
             const FuriHalSpiBusHandle* handle = &furi_hal_spi_bus_handle_nfc;
             uint32_t irq = furi_hal_nfc_get_irq(handle);
-
-        
 
             //FURI_LOG_T(TAG, "NFC chip IRQ mask: 0x%08lX", irq);
             if(irq & ST25R3916_IRQ_MASK_OSC) {
@@ -134,8 +130,6 @@ bool furi_hal_nfc_event_wait_for_specific_irq(
         furi_thread_flags_wait(FuriHalNfcEventInternalTypeIrq, FuriFlagWaitAny, timeout_ms);
     if(event_flag == FuriHalNfcEventInternalTypeIrq) {
         uint32_t irq = furi_hal_nfc_get_irq(handle);
-
-  
 
         //FURI_LOG_T(TAG, "IRQ event received, chip IRQ mask: 0x%08lX", irq);
         irq_received = ((irq & mask) == mask);
