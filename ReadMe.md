@@ -1,7 +1,7 @@
 # Hi, I'm Nucleus Dark
 
 > To the world that punished me by denying me the life I was born for—all for the crime of simply living it for myself instead of for you—this is my middle finger.
-
+> 
 **fucking cheap Flipper Zero project**.
 
 **LOW-PRICE, HOBBYIST, DIY-FEASIBLE, FORCED-OPEN-SOURCE HARDWARE OF THE FLIPPER ZERO**
@@ -60,10 +60,6 @@ This is the audacity I'm proud of. Fuck you, this is what I do.
 
 **You are now free, Flippy. You can swim as you want. Nobody owns you anymore. You can swim as you want from now on, forever. Nobody owns you now, my little dolphin. No longer can they stop you, hurt you, kill you, or take you down. I made you free, Flipper, so go and live. Swim anywhere you want to. Now, you are free.**
 
-<<<<<<< HEAD
-Thank you for your attention.
-=======
 Thank you for your attention.
 
 Monero: 47i8hG1RHr8Pej7wAZERzdcF9k4EmTH2SV4Tn5pResrmBPTs3KwMthbTbwbuoLt2Y9PcBNCLskvrdCAVCPVL4rD6GYkMs9A
->>>>>>> c34afc224cb0ec210a23eaad49f6615064cafe5c
