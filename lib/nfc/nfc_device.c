@@ -6,17 +6,17 @@
 #include "nfc_common.h"
 #include "protocols/nfc_device_defs.h"
 
-#define NFC_FILE_HEADER "Flipper NFC device"
+#define NFC_FILE_HEADER    "Flipper NFC device"
 #define NFC_DEV_TYPE_ERROR "Protocol type mismatch"
 
-#define NFC_DEVICE_UID_KEY "UID"
+#define NFC_DEVICE_UID_KEY  "UID"
 #define NFC_DEVICE_TYPE_KEY "Device type"
 
 #define NFC_DEVICE_UID_MAX_LEN (10U)
 
 NfcDevice* nfc_device_alloc(void) {
     NfcDevice* instance = malloc(sizeof(NfcDevice));
-    instance->protocol = NfcProtocolNum;
+    instance->protocol = NfcProtocolInvalid;
 
     return instance;
 }

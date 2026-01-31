@@ -13,7 +13,8 @@ TARGET_HW = 7
 ## Optimize for size
 COMPACT = 1
 ## Optimize for debugging experience
-DEBUG = 1
+DEBUG = 0
+
 # Suffix to add to files when building distribution
 # If OS environment has DIST_SUFFIX set, it will be used instead
 
@@ -116,6 +117,7 @@ FIRMWARE_APPS = {
         "radio_device_cc1101_ext",
         "unit_tests",
         "js_app",
+        "infrared",
         "archive",
     ],
 }

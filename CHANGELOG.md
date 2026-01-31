@@ -1,159 +1,52 @@
-### Breaking Changes:
-- OFW: JS: SDK 1.0:
-  - Scripts using these modules will need to be updated
-  - Module `gui/submenu`:
-    - The API now takes submenu items as view children, instead of as a view prop
-    - Effort required to update scripts using `gui/submenu`: very minimal
-  - Module `gui/widget`:
-    - The `button` event now returns an object with `key` and `type`, instead of just the key name
-    - Effort required to update scripts using `gui/widget`: very minimal
-
 ### Added:
 - Apps:
-  - Games: Geometry Flip (by @goosedev72-projects)
-  - GPIO:
-    - [GPIO] Explorer (by @EvgeniGenchev07)
-    - [KT0803] FM Transmitter (by @goosedev72-projects)
-    - [SPI] Terminal (by @janwiesemann)
-  - GPIO/Debug:
-    - [FTDI232H] FlipTDI (by @Skorpionm)
-    - [INA2xx] INA Meter (by @cepetr)
-  - GPIO/ESP: [ESP32] Ghost ESP (by @jaylikesbunda)
-  - GPIO/FlipBoard:
-    - FlipBoard Blinky (by @jamisonderek)
-    - FlipBoard Keyboard (by @jamisonderek)
-    - FlipBoard Signal (by @jamisonderek)
-    - FlipBoard Simon (by @jamisonderek)
-  - GPIO/FlipperHTTP: Free Roam (by @jblanked)
-  - GPIO/GPS: [NMEA] Nearby Files (by @Stichoza)
-  - GPIO/Sensors: [MH-Z19] CO2 Logger (by @harryob2)
-  - iButton: iButton Converter (by @Leptopt1los)
-  - Infrared:
-    - Hitachi AC Remote (by @dogtopus)
-    - LIDAR Emulator (by @regaly)
-    - Midea AC Remote (by @xakep666)
-    - Mitsubishi AC Remote (by @achistyakov)
-    - Xbox Controller (by @gebeto)
-  - Media:
-    - Fmatrix (by @misterwaztaken)
-    - Image Viewer (by @polioan)
-    - Space Playground (by @alanfortlink)
-    - Video Player (by @LTVA1)
-  - NFC: NFC-Eink (by @RebornedBrain)
-  - RFID: Simultaneous UHF RFID Reader (by @haffnerriley)
-  - Sub-GHz:
-    - Chief Cooker (by @denr01)
-    - Flipper Share (by @lomalkin)
-    - HC-11 Modem (by @Giraut)
-    - Sub Analyzer (by @RocketGod-git)
-    - Sub-GHz Scheduler (by @shalebridge, fixes by @xMasterX)
-  - Tools:
-    - FlipCrypt (by @Tyl3rA)
-    - Programmer Calculator (by @armixz)
-    - Resistance Calculator (by @instantiator)
-    - Tasks (by @MadLadSquad)
-    - Voltage Calculator (by @HappyAmos)
-  - USB:
-    - LEGO Dimensions Toy Pad (by @SegerEnd)
-    - USB-MIDI (by @kribesk, original by @DrZlo13)
-- NFC:
-  - XERO: MIFARE Ultralight C feature parity with MIFARE Classic in native NFC app (by @noproto)
-    - Dictionary attack: Uses system and user dictionaries stored under /nfc/assets/ to unlock Ultralight C tags
-    - Key management: Extra Actions → MIFARE Ultralight C Keys in the NFC app allows you to add, list, and remove Ultralight C keys from your Flipper
-    - UI: Dictionary attack scene and menu options
-  - OFW: FeliCa Service Directory Traverse + Dump All Unencrypted-Readable Services' Blocks (by @zinongli)
-  - OFW: FeliCa Emulation Handle certain Polling commands in firmware (by @dogtopus)
-  - OFW: Amusement IC Card Parser for FeliCa Lite & Lite-S (by @zinongli)
-  - OFW: MFC 1k Banapass Parser (by @zinongli)
-  - Add MIFARE Classic "Show Keys" UI (#473 by @aaronjamt)
-- SubGHz:
-  - UL: Roger (static 28 bit) with add manually support (by @xMasterX & @mishamyte)
-  - UL: V2 Phoenix full support (button switch, add manually, counter decrypt/encrypt) (by @xMasterX & @RocketGod-git, original code by @Skorpionm)
-  - UL: Add Keeloq support for - Motorline (with add manually support), Rosh, Pecinin, Rossi, Merlin, Steelmate (by @xMasterX & @RocketGod-git)
-  - UL: Nero Radio static parse and display more data (by @xMasterX)
-  - UL: Marantec protocol implement CRC verification display and add manually support (by @xMasterX & @li0ard, original code by @Skorpionm)
-  - UL: Keeloq Comunello add manually support (by @xMasterX)
-  - UL: Add variant of 'Add Manually' menu with manual editing for each value (by @MrLego8-9)
-  - UL: Add ZKTeco 430.5 MHz add manually support (by @xMasterX)
-  - UL: Add Elplast 18bit static code protocol (hello Hackcat ^_^)
-  - UL: Try to decode BFT (2 buttons remotes only) on the fly in regular Read mode (by @xMasterX)
-- RFID:
-  - Support writing Securakey, Jablotron and FDX-B to EM4305 cards (#434 by @jamisonderek)
-  - OFW: Show ISO-3166 Country Names For Pet Chips (by @zinongli)
-- BT Remote:
-  - Add Rename Option for BT Remote, simplify Bad KB BLE profile (#439 by @aaronjamt & @WillyJL)
-  - OFW: Make mouse clicker button selectable (by @LordMZTE)
-- MNTM Settings:
-  - Add Main Menu support for directories and generic files (including JS files) (#331 by @956MB & @WillyJL)
-  - Add Skip Sliding Animations option for Lockscreen (#436 by @aaronjamt)
-- CLI:
-  - OFW: NFC CLI commands (by @RebornedBrain)
-  - OFW: Buzzer command (by @ivanbarsukov)
-- JS: Added all missing GUI views for JS (by @portasynthinca3):
-  - Added `gui/button_menu`
-  - Added `gui/button_panel`
-  - Added `gui/menu`
-  - Added `gui/number_input`
-  - Added `gui/popup`
-  - Added `gui/vi_list`
-  - Changed API for `gui/submenu`, see breaking changes above
-- Desktop: Add Keybinds support for directories (#331 by @956MB & @WillyJL)
-- Input Settings: Add Vibro Trigger option (#429 by @956MB)
-- Archive: Support opening and favoriting Picopass files (by @WillyJL)
-- OFW: GUI: Add date/time input module (by @aaronjamt)
+  - NFC: ISO 15693-3 NFC Writer (by @ch4istO)
+  - Sub-GHz: ProtoPirate (by @RocketGod-git & @xMasterX & @zero-mega et al.)
+- Sub-GHz:
+  - UL: Cardin S449 protocol full support (64bit keeloq) (with Add manually, and all button codes) (use FSK12K modulation to read the remote) (by @xMasterX & @zero-mega)
+  - UL: Beninca ARC AES128 protocol full support (128bit dynamic) (with Add manually, and 2 button codes) (by @xMasterX & @zero-mega)
+  - UL: Treadmill37 protocol support (37bit static) (by @xMasterX)
+  - UL: New modulation FSK with 12KHz deviation (by @xMasterX)
+  - UL: KingGates Stylo 4k Add manually and button switch support and refactoring of encoder (by @xMasterX)
+  - UL: Stilmatic button 9 support (two buttons hold simulation) (mapped on arrow keys) (by @xMasterX)
+  - UL: Sommer last button code 0x6 support (mapped on arrow keys) (by @xMasterX)
+  - UL: Add 390MHz and 430.5MHz to default hopper list (6 elements like in OFW) (works well with Hopper RSSI level set for your enviroment) (by @xMasterX)
+- UL: Docs: Add [full list of supported SubGHz protocols](https://github.com/Next-Flip/Momentum-Firmware/blob/dev/documentation/SubGHzSupportedSystems.md) and their frequencies/modulations that can be used for reading remotes (by @xMasterX)
 
 ### Updated:
 - Apps:
-  - XERO: MFKey: Key recovery is 20% faster, new write buffering of Static Encrypted Nested key candidates performs recovery 70x faster (by @noproto)
-  - UL: Sub-GHz Remote: Add possibility to use custom buttons (by @MrLego8-9)
-  - Asteroids: Bugfixes, title screen, Drone Buddy power-up (by @SimplyMinimal)
-  - Combo Cracker: Allow press and hold to change values, add tutorial (by @TAxelAnderson), support alphabetic combination locks (by @henrygab)
-  - ESP Flasher: Bump Marauder 1.8.4 (by @justcallmekoko), add C5 support (by @Play2BReal), more reliable bootloader mode on SWCLK (by @WillyJL)
-  - FlipDownloader: Added a new option to download GitHub repositories with dedicated keyboard, add auto updating (by @jblanked)
-  - FlipSocial: C++ rewrite, comments on feed posts, simpler logic and registration (by @jblanked)
-  - FlipWiFi: Minor bugfixes (by @jblanked)
-  - Flipper Blackhat: Add Deauth Broadcast command (by @o7-machinehum)
-  - KeyCopier: Added Weiser WR3 key format (by @lightos), added Suzuki SUZ18 key format (by @RIcePatrol)
-  - Mass Storage: Add ability to spoof USB identity values (by @xtruan)
-  - Metroflip: Fix unsupported card crash, RENFE Suma 10 support, GEG Connect AID added, Top Up log parsing and animations, 16 new rail lines, support for parsing area codes, saving function for Suica/Japan Rail IC, bugfixes (by @luu176)
-  - NFC Maker: Support making empty/blank NDEF payloads (by @WillyJL)
-  - NFC Playlist: Refactor playlist worker, new settings layout and management, loop setting, controls to move between items (by @acegoal07)
-  - NMEA GPS: Moved to GPIO/GPS subfolder (by @WillyJL)
-  - Passy: Misc memory management bugfixes, misc UI improvements (by @qistoph)
-  - Seader: Fix ATS handling (by @NVX), reset SAM on error (by @bettse)
-  - Sentry Safe: New interface, settings & help page (by @H4ckd4ddy)
-  - Seos Compatible: Add keys v2 support with per-device encryption (by @bettse)
-  - Sub-GHz Playlist: Fix crash on disallowed frequencies (by @WillyJL)
-  - Weather Station: Added support for solight TE44 (by @fersingb)
-  - Weebo: Prevent 0x88 in UID[3], add more figures to the database (by @bettse)
-  - WiFi Marauder: Support for ESP32Marauder 1.8.4 (by @justcallmekoko)
+  - CAN Tools: Parity with DBC format, support importing DBC files (by @MatthewKuKanich)
+  - ESP Flasher: Bump Marauder 1.9.1 (by @justcallmekoko), Marauder 1.9.0 support (by @H4W9)
+  - FlipSocial: Autocomplete, keyboard improvements, bugfixes (by @jblanked)
+  - Geometry Dash: Major refactor, bugfixes and performance improvements, rename from Geometry Flip (by @gooseprjkt)
+  - HC-SR04 Distance Sensor: Option to change measure units (by @Tyl3rA)
+  - IconEdit: Save/Send animations, settings tab with canvas scale and cursor guides, bugfixes (by @rdefeo)
+  - NFC Login: Code refactor, bugfixes, renamed from NFC PC Login (by @Play2BReal)
+  - Seader: SAM ATR3 support, better IFSC/IFSD handling, various improvements (by @bettse)
+  - Seos Compatible: Seos write support, various improvements (by @aaronjamt)
+  - Sub-GHz Scheduler: Added new interval times, bugfixes and improvements (by @shalebridge)
+  - Unitemp: Numerous improvements from @MLAB-project fork (by @MLAB-project)
+  - UL: Update Sub-GHz apps for FM12K modulation (by @xMasterX)
 - Sub-GHz:
-  - UL: Add 868.46 MHz to default subghz freqs list (by @xMasterX)
-  - UL: Reduce less popular freqs in default hopper preset, make it faster (by @xMasterX)
-  - UL: Tune Linear (add better EZCode support), Dickert MAHS decoders (by @xMasterX)
-- Infrared:
-  - OFW: Add an old JVC model to universal remotes (by @zgracem)
-  - OFW: Add Daikin FTXN25LV1B9 and Toyotomi KTN22-12R32 to universal remotes (by @minchogaydarov)
-- OFW: BLE: Improved pairing security (by @hedger)
-- JS: Expose button event type in `gui/widget` button callback, see breaking changes above (by @WillyJL)
-- UL: Docs: Update Sub-GHz DoorHan programming instructions (by @li0ard)
+  - UL: Counter editor refactoring (by @Dmitry422)
+  - UL: Alutech AT-4N & Nice Flor S turbo speedup (by @Dmitry422)
+  - UL: Sommer fm2 in Add manually now uses FM12K modulation (Sommer without fm2 tag uses FM476) (try this if regular option doesn't work for you) (by @xMasterX)
+  - UL: Replaced Cars ignore option with Revers RB2 protocol ignore option (by @xMasterX)
+- Archive: Support opening and pinning ProtoPirate files from Archive (#510 by @LeeroysHub)
 
 ### Fixed:
-- CLI: Fix long delay with quick connect/disconnect, qFlipper should connect faster as expected again (by @WillyJL)
-- Storage: Dont send mount event if SD mounted at boot, fix SD card icon showing late on boot (by @WillyJL)
-- Bad KB:
-  - Fix modifier keys with HOLD/RELEASE commands (by @WillyJL)
-  - OFW: Fix demo_windows.txt for newer version of ai enabled Windows Notepad not able to keep up with default fast input text (by @ase1590)
-- Desktop: Fix lock screen hang (#438 by @aaronjamt)
+- Sub-GHz:
+  - UL: Fixed button mapping for FAAC RC/XT (by @xMasterX)
+  - UL: Possible Sommer timings fix (by @xMasterX)
+  - UL: Various fixes (by @xMasterX)
+  - UL: Nice Flor S remove extra uint64 variable (by @xMasterX)
 - NFC:
-  - Fix incorrect Saflok year formula (#433 by @Eltrick)
-  - Fix read crash with unexpectedly large MFC AUTH(0) response, eg with Chameleon Ultra NTAG emualtion (by @WillyJL)
-  - Fix slashes in prefilled filename (by @WillyJL)
-- FBT: Fix redundant decl for apps using an icon disabled in API (by @WillyJL)
-- UL: Sub-GHz: Fix crash in add manually menu (by @xMasterX)
-- OFW: GUI: Fix Number Input Save Icon (by @zinongli)
-- OFW: JS: Stop PWM on exit (by @portasynthinca3)
-- OFW: Sub-GHz: Fix TIM17 config not applied immediately (by @Aerosnail)
+  - Fix sending 32+ byte ISO 15693-3 commands (by @WillyJL)
+  - Fixes to `READ_MULTI` and `GET_BLOCK_SECURITY` commands in ISO 15693-3 emulation (#501 by @WillyJL & aaronjamt)
+  - UL: Fix LED not blinking at SLIX unlock (by @xMasterX)
+- UL: UI: Some small changes (by @xMasterX)
 
 ### Removed:
-- Disabled FURI_TRACE due to flash space constraints, `furi_check failed` crashes will no longer show the file path of the error for now
+- Sub-GHz:
+  - Removed Starline, ScherKhan and Kia protocols from main Sub-GHz app, they can be decoded with `Apps > Sub-GHz > ProtoPirate` external app
+  - Disabled X10 and Hormann Bisecur protocols due to flash space constraints and very limited usefulness, Momentum now has same protocol list as Unleashed

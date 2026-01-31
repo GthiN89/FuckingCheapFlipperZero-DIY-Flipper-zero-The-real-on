@@ -19,7 +19,9 @@ typedef struct {
     uint8_t value;
 } NotificationMessageDataLed;
 
-
+typedef struct {
+    bool on;
+} NotificationMessageDataVibro;
 
 typedef struct {
     uint32_t length;
@@ -41,13 +43,13 @@ typedef union {
     NotificationMessageDataSound sound;
     NotificationMessageDataLed led;
     NotificationMessageDataLedBlink led_blink;
-
+    NotificationMessageDataVibro vibro;
     NotificationMessageDataDelay delay;
     NotificationMessageDataForcedSettings forced_settings;
 } NotificationMessageData;
 
 typedef enum {
-
+    NotificationMessageTypeVibro,
 
     NotificationMessageTypeSoundOn,
     NotificationMessageTypeSoundOff,
@@ -69,14 +71,12 @@ typedef enum {
     NotificationMessageTypeDoNotReset,
 
     NotificationMessageTypeForceSpeakerVolumeSetting,
-
+    NotificationMessageTypeForceVibroSetting,
     NotificationMessageTypeForceDisplayBrightnessSetting,
 
     NotificationMessageTypeLedBrightnessSettingApply,
 
     NotificationMessageTypeLcdContrastUpdate,
-
-    NotificationMessageTypeVibro,
 } NotificationMessageType;
 
 typedef struct {

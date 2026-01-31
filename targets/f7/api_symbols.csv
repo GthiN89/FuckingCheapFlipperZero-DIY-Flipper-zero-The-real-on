@@ -1,5 +1,5 @@
 entry,status,name,type,params
-Version,+,86.4,,
+Version,+,87.1,,
 Header,+,applications/drivers/subghz/cc1101_ext/cc1101_ext_interconnect.h,,
 Header,+,applications/main/archive/helpers/archive_helpers_ext.h,,
 Header,+,applications/main/subghz/subghz_fap.h,,
@@ -69,6 +69,9 @@ Header,+,lib/ibutton/ibutton_protocols.h,,
 Header,+,lib/ibutton/ibutton_worker.h,,
 Header,+,lib/ieee754_parse_wrap/wrappers.h,,
 Header,+,lib/infrared/encoder_decoder/infrared.h,,
+Header,+,lib/infrared/signal/infrared_brute_force.h,,
+Header,+,lib/infrared/signal/infrared_error_code.h,,
+Header,+,lib/infrared/signal/infrared_signal.h,,
 Header,+,lib/infrared/worker/infrared_transmit.h,,
 Header,+,lib/infrared/worker/infrared_worker.h,,
 Header,+,lib/lfrfid/lfrfid_dict_file.h,,
@@ -142,6 +145,7 @@ Header,+,lib/nfc/helpers/iso14443_crc.h,,
 Header,+,lib/nfc/helpers/nfc_data_generator.h,,
 Header,+,lib/nfc/helpers/nfc_util.h,,
 Header,+,lib/nfc/nfc.h,,
+Header,+,lib/nfc/nfc_common.h,,
 Header,+,lib/nfc/nfc_device.h,,
 Header,+,lib/nfc/nfc_listener.h,,
 Header,+,lib/nfc/nfc_poller.h,,
@@ -440,6 +444,7 @@ Function,-,SK6805_update,void,
 Function,-,SystemCoreClockUpdate,void,
 Function,-,SystemInit,void,
 Function,-,_Exit,void,int
+Function,+,__aeabi_f2d,double,float
 Function,+,__aeabi_uldivmod,void*,"uint64_t, uint64_t"
 Function,-,__assert,void,"const char*, int, const char*"
 Function,+,__assert_func,void,"const char*, int, const char*, const char*"
@@ -2146,6 +2151,19 @@ Function,-,infinity,double,
 Function,-,infinityf,float,
 Function,+,infrared_alloc_decoder,InfraredDecoderHandler*,
 Function,+,infrared_alloc_encoder,InfraredEncoderHandler*,
+Function,-,infrared_brute_force_add_record,void,"InfraredBruteForce*, uint32_t, const char*"
+Function,-,infrared_brute_force_alloc,InfraredBruteForce*,
+Function,-,infrared_brute_force_calculate_messages,InfraredErrorCode,InfraredBruteForce*
+Function,-,infrared_brute_force_calculate_messages_ex,InfraredErrorCode,"InfraredBruteForce*, _Bool, _Bool"
+Function,-,infrared_brute_force_free,void,InfraredBruteForce*
+Function,-,infrared_brute_force_get_button_count,size_t,const InfraredBruteForce*
+Function,-,infrared_brute_force_get_button_name,const char*,"const InfraredBruteForce*, size_t"
+Function,-,infrared_brute_force_is_started,_Bool,const InfraredBruteForce*
+Function,-,infrared_brute_force_reset,void,InfraredBruteForce*
+Function,-,infrared_brute_force_send,_Bool,"InfraredBruteForce*, uint32_t"
+Function,-,infrared_brute_force_set_db_filename,void,"InfraredBruteForce*, const char*"
+Function,-,infrared_brute_force_start,_Bool,"InfraredBruteForce*, uint32_t, uint32_t*"
+Function,-,infrared_brute_force_stop,void,InfraredBruteForce*
 Function,+,infrared_check_decoder_ready,const InfraredMessage*,InfraredDecoderHandler*
 Function,+,infrared_decode,const InfraredMessage*,"InfraredDecoderHandler*, _Bool, uint32_t"
 Function,+,infrared_encode,InfraredStatus,"InfraredEncoderHandler*, uint32_t*, _Bool*"
@@ -2164,6 +2182,22 @@ Function,+,infrared_reset_encoder,void,"InfraredEncoderHandler*, const InfraredM
 Function,+,infrared_send,void,"const InfraredMessage*, int"
 Function,+,infrared_send_raw,void,"const uint32_t[], uint32_t, _Bool"
 Function,+,infrared_send_raw_ext,void,"const uint32_t[], uint32_t, _Bool, uint32_t, float"
+Function,-,infrared_signal_alloc,InfraredSignal*,
+Function,-,infrared_signal_free,void,InfraredSignal*
+Function,-,infrared_signal_get_message,const InfraredMessage*,const InfraredSignal*
+Function,-,infrared_signal_get_raw_signal,const InfraredRawSignal*,const InfraredSignal*
+Function,-,infrared_signal_is_raw,_Bool,const InfraredSignal*
+Function,-,infrared_signal_is_valid,_Bool,const InfraredSignal*
+Function,-,infrared_signal_read,InfraredErrorCode,"InfraredSignal*, FlipperFormat*, FuriString*"
+Function,-,infrared_signal_read_body,InfraredErrorCode,"InfraredSignal*, FlipperFormat*"
+Function,-,infrared_signal_read_name,InfraredErrorCode,"FlipperFormat*, FuriString*"
+Function,-,infrared_signal_save,InfraredErrorCode,"const InfraredSignal*, FlipperFormat*, const char*"
+Function,-,infrared_signal_search_by_index_and_read,InfraredErrorCode,"InfraredSignal*, FlipperFormat*, size_t"
+Function,-,infrared_signal_search_by_name_and_read,InfraredErrorCode,"InfraredSignal*, FlipperFormat*, const char*"
+Function,-,infrared_signal_set_message,void,"InfraredSignal*, const InfraredMessage*"
+Function,-,infrared_signal_set_raw_signal,void,"InfraredSignal*, const uint32_t*, size_t, uint32_t, float"
+Function,-,infrared_signal_set_signal,void,"InfraredSignal*, const InfraredSignal*"
+Function,-,infrared_signal_transmit,void,const InfraredSignal*
 Function,+,infrared_worker_alloc,InfraredWorker*,
 Function,+,infrared_worker_free,void,InfraredWorker*
 Function,+,infrared_worker_get_decoded_signal,const InfraredMessage*,const InfraredWorkerSignal*
@@ -3584,6 +3618,9 @@ Function,+,subghz_app,int32_t,char*
 Function,+,subghz_block_generic_deserialize,SubGhzProtocolStatus,"SubGhzBlockGeneric*, FlipperFormat*"
 Function,+,subghz_block_generic_deserialize_check_count_bit,SubGhzProtocolStatus,"SubGhzBlockGeneric*, FlipperFormat*, uint16_t"
 Function,+,subghz_block_generic_get_preset_name,void,"const char*, FuriString*"
+Function,+,subghz_block_generic_global_counter_override_get,_Bool,uint32_t*
+Function,+,subghz_block_generic_global_counter_override_set,void,uint32_t
+Function,+,subghz_block_generic_global_reset,void,void*
 Function,+,subghz_block_generic_serialize,SubGhzProtocolStatus,"SubGhzBlockGeneric*, FlipperFormat*, SubGhzRadioPreset*"
 Function,+,subghz_custom_btn_get,uint8_t,
 Function,+,subghz_custom_btn_get_original,uint8_t,
@@ -3653,6 +3690,7 @@ Function,+,subghz_keystore_raw_get_data,_Bool,"const char*, size_t, uint8_t*, si
 Function,+,subghz_keystore_reset_kl,void,SubGhzKeystore*
 Function,+,subghz_keystore_save,_Bool,"SubGhzKeystore*, const char*, uint8_t*"
 Function,+,subghz_protocol_alutech_at_4n_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, SubGhzRadioPreset*"
+Function,+,subghz_protocol_beninca_arc_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint32_t, SubGhzRadioPreset*"
 Function,+,subghz_protocol_blocks_add_bit,void,"SubGhzBlockDecoder*, uint8_t"
 Function,+,subghz_protocol_blocks_add_bytes,uint8_t,"const uint8_t[], size_t"
 Function,+,subghz_protocol_blocks_add_to_128_bit,void,"SubGhzBlockDecoder*, uint8_t, uint64_t*"
@@ -3697,6 +3735,7 @@ Function,+,subghz_protocol_encoder_raw_yield,LevelDuration,void*
 Function,+,subghz_protocol_faac_slh_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint32_t, uint32_t, const char*, SubGhzRadioPreset*"
 Function,+,subghz_protocol_keeloq_bft_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, uint32_t, const char*, SubGhzRadioPreset*"
 Function,+,subghz_protocol_keeloq_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, const char*, SubGhzRadioPreset*"
+Function,+,subghz_protocol_kinggates_stylo_4k_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, SubGhzRadioPreset*"
 Function,+,subghz_protocol_nice_flor_s_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, SubGhzRadioPreset*, _Bool"
 Function,+,subghz_protocol_phoenix_v2_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint16_t, SubGhzRadioPreset*"
 Function,+,subghz_protocol_raw_file_encoder_worker_set_callback_end,void,"SubGhzProtocolEncoderRAW*, SubGhzProtocolEncoderRAWCallbackEnd, void*"
@@ -3712,7 +3751,6 @@ Function,+,subghz_protocol_secplus_v1_check_fixed,_Bool,uint32_t
 Function,+,subghz_protocol_secplus_v2_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint32_t, SubGhzRadioPreset*"
 Function,+,subghz_protocol_somfy_keytis_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, SubGhzRadioPreset*"
 Function,+,subghz_protocol_somfy_telis_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, SubGhzRadioPreset*"
-Function,+,subghz_protocol_star_line_create_data,_Bool,"void*, FlipperFormat*, uint32_t, uint8_t, uint16_t, const char*, SubGhzRadioPreset*"
 Function,+,subghz_receiver_alloc_init,SubGhzReceiver*,SubGhzEnvironment*
 Function,+,subghz_receiver_decode,void,"SubGhzReceiver*, _Bool, uint32_t"
 Function,+,subghz_receiver_free,void,SubGhzReceiver*
@@ -4212,7 +4250,7 @@ Variable,-,I_err_04,const Icon,
 Variable,-,I_err_05,const Icon,
 Variable,-,I_err_06,const Icon,
 Variable,-,I_err_07,const Icon,
-Variable,+,I_err_09,const Icon,
+Variable,-,I_err_09,const Icon,
 Variable,+,I_exit_19x20,const Icon,
 Variable,+,I_exit_hover_19x20,const Icon,
 Variable,+,I_exit_text_18x5,const Icon,
@@ -4281,6 +4319,7 @@ Variable,+,I_power_text_24x5,const Icon,
 Variable,+,I_prev_19x20,const Icon,
 Variable,+,I_prev_hover_19x20,const Icon,
 Variable,+,I_prev_text_19x5,const Icon,
+Variable,+,I_protopirate_10px,const Icon,
 Variable,-,I_qr_benchmark_25x25,const Icon,
 Variable,+,I_red_19x20,const Icon,
 Variable,+,I_red_hover_19x20,const Icon,
@@ -4349,13 +4388,13 @@ Variable,+,furi_hal_spi_preset_1edge_low_2m,const LL_SPI_InitTypeDef,
 Variable,+,furi_hal_spi_preset_1edge_low_8m,const LL_SPI_InitTypeDef,
 Variable,+,furi_hal_spi_preset_1edge_low_8m_NFC,const LL_SPI_InitTypeDef,
 Variable,+,gpio_button_IRQ,const GpioPin,
-Variable,-,gpio_button_back,const GpioPin,
-Variable,-,gpio_button_down,const GpioPin,
-Variable,-,gpio_button_left,const GpioPin,
-Variable,-,gpio_button_ok,const GpioPin,
-Variable,-,gpio_button_right,const GpioPin,
+Variable,+,gpio_button_back,const GpioPin,
+Variable,+,gpio_button_down,const GpioPin,
+Variable,+,gpio_button_left,const GpioPin,
+Variable,+,gpio_button_ok,const GpioPin,
+Variable,+,gpio_button_right,const GpioPin,
 Variable,+,gpio_button_sr_latch,const GpioPin,
-Variable,-,gpio_button_up,const GpioPin,
+Variable,+,gpio_button_up,const GpioPin,
 Variable,+,gpio_cc1101_g0,const GpioPin,
 Variable,+,gpio_display_cs,const GpioPin,
 Variable,+,gpio_display_di,const GpioPin,
@@ -4423,6 +4462,8 @@ Variable,+,message_display_backlight_on,const NotificationMessage,
 Variable,+,message_do_not_reset,const NotificationMessage,
 Variable,+,message_force_display_brightness_setting_1f,const NotificationMessage,
 Variable,+,message_force_speaker_volume_setting_1f,const NotificationMessage,
+Variable,+,message_force_vibro_setting_off,const NotificationMessage,
+Variable,+,message_force_vibro_setting_on,const NotificationMessage,
 Variable,+,message_green_0,const NotificationMessage,
 Variable,+,message_green_255,const NotificationMessage,
 Variable,+,message_lcd_contrast_update,const NotificationMessage,
@@ -4537,6 +4578,8 @@ Variable,+,message_note_gs8,const NotificationMessage,
 Variable,+,message_red_0,const NotificationMessage,
 Variable,+,message_red_255,const NotificationMessage,
 Variable,+,message_sound_off,const NotificationMessage,
+Variable,+,message_vibro_off,const NotificationMessage,
+Variable,+,message_vibro_on,const NotificationMessage,
 Variable,+,momentum_settings,MomentumSettings,
 Variable,-,nfc_device_emv,const NfcDeviceBase,
 Variable,-,nfc_device_felica,const NfcDeviceBase,
@@ -4594,12 +4637,14 @@ Variable,+,sequence_set_only_blue_255,const NotificationSequence,
 Variable,+,sequence_set_only_green_255,const NotificationSequence,
 Variable,+,sequence_set_only_red_255,const NotificationSequence,
 Variable,+,sequence_set_red_255,const NotificationSequence,
-Variable,+,sequence_set_vibro_on,NotificationSequence,
+Variable,+,sequence_set_vibro_on,const NotificationSequence,
 Variable,+,sequence_single_vibro,const NotificationSequence,
 Variable,+,sequence_solid_yellow,const NotificationSequence,
 Variable,+,sequence_success,const NotificationSequence,
 Variable,+,simple_array_config_uint8_t,const SimpleArrayConfig,
+Variable,+,subghz_block_generic_global,SubGhzBlockGenericGlobal,
 Variable,-,subghz_device_cc1101_int,const SubGhzDevice,
+Variable,+,subghz_device_cc1101_preset_2fsk_dev12khz_async_regs,const uint8_t[],
 Variable,+,subghz_device_cc1101_preset_2fsk_dev2_38khz_async_regs,const uint8_t[],
 Variable,+,subghz_device_cc1101_preset_2fsk_dev47_6khz_async_regs,const uint8_t[],
 Variable,+,subghz_device_cc1101_preset_gfsk_9_99kb_async_regs,const uint8_t[],

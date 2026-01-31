@@ -167,7 +167,7 @@ void flipper_start_service(const FlipperInternalApplication* service) {
 }
 
 void flipper_init(void) {
-   // furi_hal_light_sequence("rgb WB");
+    furi_hal_light_sequence("rgb WB");
     flipper_print_version("Firmware", furi_hal_version_get_firmware_version());
     FURI_LOG_I(TAG, "Boot mode %d", furi_hal_rtc_get_boot_mode());
 

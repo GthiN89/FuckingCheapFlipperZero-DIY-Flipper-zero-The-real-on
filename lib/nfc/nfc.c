@@ -11,6 +11,8 @@
 #define NFC_FELICA_LISTENER_RESPONSE_TIME_A_FC (512 * 64)
 #define NFC_FELICA_LISTENER_RESPONSE_TIME_B_FC (256 * 64)
 
+// --- REMOVED: Hypothetical function and constant definitions that caused the linker error ---
+
 // --- Internal State Enums ---
 typedef enum {
     NfcStateIdle,
@@ -301,6 +303,9 @@ void nfc_config(Nfc* instance, NfcMode mode, NfcTech tech) {
                                                         FuriHalNfcModeListener;
     furi_hal_nfc_low_power_mode_stop();
     furi_hal_nfc_set_mode(hal_mode, hal_tech);
+    
+    // REMOVED: The call to the non-existent furi_hal_nfc_set_min_rfo_resistance() function.
+
     instance->mode = mode;
     instance->config_state = NfcConfigurationStateDone;
     // Removed outer release: furi_hal_nfc_release();

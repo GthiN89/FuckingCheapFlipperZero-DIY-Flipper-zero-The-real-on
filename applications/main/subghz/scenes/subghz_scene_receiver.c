@@ -10,9 +10,11 @@ const NotificationSequence subghz_sequence_rx = {
 
     &message_display_backlight_on,
 
+    &message_vibro_on,
     &message_note_c6,
     &message_delay_50,
     &message_sound_off,
+    &message_vibro_off,
 
     &message_delay_50,
     NULL,
@@ -23,9 +25,11 @@ const NotificationSequence subghz_sequence_rx_locked = {
 
     &message_display_backlight_on,
 
+    &message_vibro_on,
     &message_note_c6,
     &message_delay_50,
     &message_sound_off,
+    &message_vibro_off,
 
     &message_delay_500,
 
@@ -34,9 +38,11 @@ const NotificationSequence subghz_sequence_rx_locked = {
 };
 
 const NotificationSequence subghz_sequence_tx_beep = {
+    &message_vibro_on,
     &message_note_c6,
     &message_delay_50,
     &message_sound_off,
+    &message_vibro_off,
     &message_delay_50,
     NULL,
 };

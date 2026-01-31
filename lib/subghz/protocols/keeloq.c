@@ -54,6 +54,8 @@ typedef enum {
     KeeloqDecoderStepCheckDuration,
 } KeeloqDecoderStep;
 
+static uint8_t keeloq_counter_mode = 0;
+
 const SubGhzProtocolDecoder subghz_protocol_keeloq_decoder = {
     .alloc = subghz_protocol_decoder_keeloq_alloc,
     .free = subghz_protocol_decoder_keeloq_free,
@@ -184,18 +186,79 @@ static bool subghz_protocol_keeloq_gen_data(
     if(counter_up && prog_mode == PROG_MODE_OFF) {
         // Counter increment conditions
 
-        // If counter is 0xFFFF we will reset it to 0
-        if(instance->generic.cnt < 0xFFFF) {
-            // Increase counter with value set in global settings (mult)
-            if((instance->generic.cnt + furi_hal_subghz_get_rolling_counter_mult()) > 0xFFFF) {
+        if(keeloq_counter_mode == 0) {
+            // Check for OFEX (overflow experimental) mode
+            if(furi_hal_subghz_get_rolling_counter_mult() != -0x7FFFFFFF) {
+                // standart counter mode. PULL data from subghz_block_generic_global variables
+                if(!subghz_block_generic_global_counter_override_get(&instance->generic.cnt)) {
+                    // if counter_override_get return FALSE then counter was not changed and we increase counter by standart mult value
+                    if((instance->generic.cnt + furi_hal_subghz_get_rolling_counter_mult()) >
+                       0xFFFF) {
+                        instance->generic.cnt = 0;
+                    } else {
+                        instance->generic.cnt += furi_hal_subghz_get_rolling_counter_mult();
+                    }
+                }
+            } else {
+                if((instance->generic.cnt + 0x1) > 0xFFFF) {
+                    instance->generic.cnt = 0;
+                } else if(instance->generic.cnt >= 0x1 && instance->generic.cnt != 0xFFFE) {
+                    instance->generic.cnt = 0xFFFE;
+                } else {
+                    instance->generic.cnt++;
+                }
+            }
+        } else if(keeloq_counter_mode == 1) {
+            // Mode 1
+            // 0000 / 0001 / FFFE / FFFF
+            if((instance->generic.cnt + 0x1) > 0xFFFF) {
+                instance->generic.cnt = 0;
+            } else if(instance->generic.cnt >= 0x1 && instance->generic.cnt != 0xFFFE) {
+                instance->generic.cnt = 0xFFFE;
+            } else {
+                instance->generic.cnt++;
+            }
+        } else if(keeloq_counter_mode == 2) {
+            // Mode 2
+            // + 0x3333 each time
+            if((instance->generic.cnt + 0x3333) > 0xFFFF) {
                 instance->generic.cnt = 0;
             } else {
-                instance->generic.cnt += furi_hal_subghz_get_rolling_counter_mult();
+                instance->generic.cnt += 0x3333;
             }
-        } else if(
-            (instance->generic.cnt >= 0xFFFF) &&
-            (furi_hal_subghz_get_rolling_counter_mult() != 0)) {
-            instance->generic.cnt = 0;
+        } else if(keeloq_counter_mode == 3) {
+            // Mode 3
+            // 0x8006 / 0x8007 / 0x0006 / 0x0007
+            if(instance->generic.cnt != 0x8006 && instance->generic.cnt != 0x8007 &&
+               instance->generic.cnt != 0x0006) {
+                instance->generic.cnt = 0x8006;
+            } else if(instance->generic.cnt == 0x8007) {
+                instance->generic.cnt = 0x0006;
+            } else {
+                instance->generic.cnt++;
+            }
+
+        } else if(keeloq_counter_mode == 4) {
+            // Mode 4
+            // 0x807B / 0x807C / 0x007B / 0x007C
+            if(instance->generic.cnt != 0x807B && instance->generic.cnt != 0x807C &&
+               instance->generic.cnt != 0x007B) {
+                instance->generic.cnt = 0x807B;
+            } else if(instance->generic.cnt == 0x807C) {
+                instance->generic.cnt = 0x007B;
+            } else {
+                instance->generic.cnt++;
+            }
+        } else if(keeloq_counter_mode == 5) {
+            // Mode 5
+            // 0000 / FFFF
+            if((instance->generic.cnt + 0x1) > 0xFFFF) {
+                instance->generic.cnt = 0;
+            } else {
+                instance->generic.cnt = 0xFFFF;
+            }
+        } else {
+            // Mode 6 - Freeze counter
         }
     }
     if(prog_mode == PROG_MODE_OFF) {
@@ -243,11 +306,13 @@ static bool subghz_protocol_keeloq_gen_data(
                 (strcmp(instance->manufacture_name, "Rosh") == 0) ||
                 (strcmp(instance->manufacture_name, "Rossi") == 0) ||
                 (strcmp(instance->manufacture_name, "Pecinin") == 0) ||
-                (strcmp(instance->manufacture_name, "Steelmate") == 0)) {
+                (strcmp(instance->manufacture_name, "Steelmate") == 0) ||
+                (strcmp(instance->manufacture_name, "Cardin_S449") == 0)) {
                 // DTM Neo, Came_Space uses 12bit serial -> simple learning
                 // FAAC_RC,XT , Mutanco_Mutancode, Genius_Bravo, GSN 12bit serial -> normal learning
                 // Rosh, Rossi, Pecinin -> 12bit serial - simple learning
                 // Steelmate -> 12bit serial - normal learning
+                // Cardin_S449 -> 12bit serial - normal learning
                 decrypt = btn << 28 | (instance->generic.serial & 0xFFF) << 16 |
                           instance->generic.cnt;
             } else if(
@@ -449,10 +514,23 @@ static bool
         (strcmp(instance->manufacture_name, "Monarch") == 0) ||
         (strcmp(instance->manufacture_name, "NICE_Smilo") == 0)) {
         klq_last_custom_btn = 0xB;
-    } else if((strcmp(instance->manufacture_name, "Novoferm") == 0)) {
+    } else if(
+        (strcmp(instance->manufacture_name, "Novoferm") == 0) ||
+        (strcmp(instance->manufacture_name, "Stilmatic") == 0)) {
         klq_last_custom_btn = 0x9;
-    } else if((strcmp(instance->manufacture_name, "EcoStar") == 0)) {
+    } else if(
+        (strcmp(instance->manufacture_name, "EcoStar") == 0) ||
+        (strcmp(instance->manufacture_name, "Sommer") == 0)) {
         klq_last_custom_btn = 0x6;
+    } else if((strcmp(instance->manufacture_name, "AN-Motors") == 0)) {
+        klq_last_custom_btn = 0xC;
+    } else if((strcmp(instance->manufacture_name, "Cardin_S449") == 0)) {
+        klq_last_custom_btn = 0xD;
+    }
+
+    uint32_t gap_duration = subghz_protocol_keeloq_const.te_short * 40;
+    if((strcmp(instance->manufacture_name, "Sommer") == 0)) {
+        gap_duration = subghz_protocol_keeloq_const.te_short * 29;
     }
 
     btn = subghz_protocol_keeloq_get_btn_code(klq_last_custom_btn);
@@ -509,8 +587,7 @@ static bool
     // send end
     instance->encoder.upload[index++] =
         level_duration_make(true, (uint32_t)subghz_protocol_keeloq_const.te_short);
-    instance->encoder.upload[index++] =
-        level_duration_make(false, (uint32_t)subghz_protocol_keeloq_const.te_short * 40);
+    instance->encoder.upload[index++] = level_duration_make(false, gap_duration);
 
     return true;
 }
@@ -553,8 +630,35 @@ SubGhzProtocolStatus
                flipper_format, "Manufacture", instance->manufacture_from_file)) {
             instance->manufacture_name = furi_string_get_cstr(instance->manufacture_from_file);
             instance->keystore->mfname = instance->manufacture_name;
+            // Compatibility fixes for old names in user files
+            if(strcmp(instance->manufacture_name, "Sommer(fsk476)") == 0) {
+                instance->manufacture_name = "Sommer";
+                instance->keystore->mfname = instance->manufacture_name;
+                if(!flipper_format_rewind(flipper_format)) {
+                    FURI_LOG_E(TAG, "Rewind error");
+                    break;
+                }
+                if(!flipper_format_update_string_cstr(
+                       flipper_format, "Manufacture", instance->manufacture_name)) {
+                    FURI_LOG_E(TAG, "DECODER: Unable to fix Sommer manufacture name");
+                    ret = SubGhzProtocolStatusError;
+                    break;
+                }
+            }
         } else {
             FURI_LOG_D(TAG, "ENCODER: Missing Manufacture");
+        }
+
+        if(!flipper_format_rewind(flipper_format)) {
+            FURI_LOG_E(TAG, "Rewind error");
+            break;
+        }
+
+        uint32_t tmp_counter_mode;
+        if(flipper_format_read_uint32(flipper_format, "CounterMode", &tmp_counter_mode, 1)) {
+            keeloq_counter_mode = (uint8_t)tmp_counter_mode;
+        } else {
+            keeloq_counter_mode = 0;
         }
 
         if(!flipper_format_rewind(flipper_format)) {
@@ -565,7 +669,7 @@ SubGhzProtocolStatus
         subghz_protocol_keeloq_check_remote_controller(
             &instance->generic, instance->keystore, &instance->manufacture_name);
 
-        //optional parameter parameter
+        // Optional value
         flipper_format_read_uint32(
             flipper_format, "Repeat", (uint32_t*)&instance->encoder.repeat, 1);
 
@@ -1192,8 +1296,35 @@ SubGhzProtocolStatus
                flipper_format, "Manufacture", instance->manufacture_from_file)) {
             instance->manufacture_name = furi_string_get_cstr(instance->manufacture_from_file);
             instance->keystore->mfname = instance->manufacture_name;
+            // Compatibility fixes for old names in user files
+            if(strcmp(instance->manufacture_name, "Sommer(fsk476)") == 0) {
+                instance->manufacture_name = "Sommer";
+                instance->keystore->mfname = instance->manufacture_name;
+                if(!flipper_format_rewind(flipper_format)) {
+                    FURI_LOG_E(TAG, "Rewind error");
+                    break;
+                }
+                if(!flipper_format_update_string_cstr(
+                       flipper_format, "Manufacture", instance->manufacture_name)) {
+                    FURI_LOG_E(TAG, "DECODER: Unable to fix Sommer manufacture name");
+                    res = SubGhzProtocolStatusError;
+                    break;
+                }
+            }
         } else {
             FURI_LOG_D(TAG, "DECODER: Missing Manufacture");
+        }
+
+        if(!flipper_format_rewind(flipper_format)) {
+            FURI_LOG_E(TAG, "Rewind error");
+            break;
+        }
+
+        uint32_t tmp_counter_mode;
+        if(flipper_format_read_uint32(flipper_format, "CounterMode", &tmp_counter_mode, 1)) {
+            keeloq_counter_mode = (uint8_t)tmp_counter_mode;
+        } else {
+            keeloq_counter_mode = 0;
         }
 
         if(!flipper_format_rewind(flipper_format)) {
@@ -1241,6 +1372,12 @@ static uint8_t subghz_protocol_keeloq_get_btn_code(uint8_t last_btn_code) {
         case 0xF:
             btn = 0x1;
             break;
+        case 0x9:
+            btn = 0x2;
+            break;
+        case 0x6:
+            btn = 0x2;
+            break;
 
         default:
             btn = 0x1;
@@ -1264,6 +1401,12 @@ static uint8_t subghz_protocol_keeloq_get_btn_code(uint8_t last_btn_code) {
             btn = 0x4;
             break;
         case 0xF:
+            btn = 0x4;
+            break;
+        case 0x9:
+            btn = 0x4;
+            break;
+        case 0x6:
             btn = 0x4;
             break;
 
@@ -1291,6 +1434,12 @@ static uint8_t subghz_protocol_keeloq_get_btn_code(uint8_t last_btn_code) {
         case 0xF:
             btn = 0x8;
             break;
+        case 0x9:
+            btn = 0x6;
+            break;
+        case 0x6:
+            btn = 0x9;
+            break;
 
         default:
             btn = 0x8;
@@ -1316,9 +1465,15 @@ static uint8_t subghz_protocol_keeloq_get_btn_code(uint8_t last_btn_code) {
         case 0xF:
             btn = 0x2;
             break;
+        case 0x9:
+            btn = last_btn_code;
+            break;
+        case 0x6:
+            btn = last_btn_code;
+            break;
 
         default:
-            btn = 0x2;
+            btn = last_btn_code;
             break;
         }
     }
@@ -1342,6 +1497,9 @@ void subghz_protocol_decoder_keeloq_get_string(void* context, FuriString* output
     uint32_t code_found_reverse_lo = code_found_reverse & 0x00000000ffffffff;
 
     if(strcmp(instance->manufacture_name, "BFT") == 0) {
+        subghz_block_generic_global.cnt_is_available = true;
+        subghz_block_generic_global.cnt_length_bit = 16;
+        subghz_block_generic_global.current_cnt = instance->generic.cnt;
         furi_string_cat_printf(
             output,
             "%s %dbit\r\n"
@@ -1377,6 +1535,9 @@ void subghz_protocol_decoder_keeloq_get_string(void* context, FuriString* output
             instance->generic.btn,
             instance->manufacture_name);
     } else {
+        subghz_block_generic_global.cnt_is_available = true;
+        subghz_block_generic_global.cnt_length_bit = 16;
+        subghz_block_generic_global.current_cnt = instance->generic.cnt;
         furi_string_cat_printf(
             output,
             "%s %dbit\r\n"

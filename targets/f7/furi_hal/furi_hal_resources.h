@@ -171,9 +171,9 @@ extern const GpioPin gpio_button_sr_latch;
 #define PB3_GPIO_Port GPIOB
 #define PB3_Pin       LL_GPIO_PIN_3
 #define PC0_GPIO_Port GPIOA
-#define PC0_Pin       LL_GPIO_PIN_7
+#define PC0_Pin       LL_GPIO_PIN_7 // - PA7 /// PB9 PA10 PB7
 #define PC1_GPIO_Port GPIOA
-#define PC1_Pin       LL_GPIO_PIN_6
+#define PC1_Pin       LL_GPIO_PIN_6 // - PB4 //// PB8 // PA9 PB6
 #define PC3_GPIO_Port GPIOA
 #define PC3_Pin       LL_GPIO_PIN_8
 
@@ -188,8 +188,8 @@ extern const GpioPin gpio_button_sr_latch;
 #define RFID_PULL_Pin          LL_GPIO_PIN_2
 #define RFID_RF_IN_GPIO_Port   GPIOA
 #define RFID_RF_IN_Pin         LL_GPIO_PIN_6
-#define RFID_CARRIER_GPIO_Port GPIOA
-#define RFID_CARRIER_Pin       LL_GPIO_PIN_5
+#define RFID_CARRIER_GPIO_Port GPIOC
+#define RFID_CARRIER_Pin       LL_GPIO_PIN_0
 #define RF_SW_0_GPIO_Port GPIOC
 #define RF_SW_0_Pin       LL_GPIO_PIN_0
 

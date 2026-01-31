@@ -123,7 +123,7 @@ bool subghz_test_static_input(InputEvent* event, void* context) {
                             instance->encoder, furi_get_tick());
                         subghz_encoder_princeton_for_testing_print_log(instance->encoder);
                         furi_hal_subghz_stop_async_tx();
-                        //notification_message(notification, &sequence_reset_red);
+                        notification_message(notification, &sequence_reset_red);
                     }
                     instance->status_tx = SubGhzTestStaticStatusIDLE;
                 }

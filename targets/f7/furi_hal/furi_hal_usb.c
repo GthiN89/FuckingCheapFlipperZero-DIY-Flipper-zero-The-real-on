@@ -123,7 +123,7 @@ void furi_hal_usb_init(void) {
     usb.thread = furi_thread_alloc_service("UsbDriver", 1024, furi_hal_usb_thread, NULL);
     furi_thread_start(usb.thread);
 
-    //FURI_LOG_I(TAG, "Init OK");
+    FURI_LOG_I(TAG, "Init OK");
 }
 
 static void furi_hal_usb_send_message(UsbApiEventMessage* message) {
@@ -339,7 +339,7 @@ static void usb_process_mode_start(FuriHalUsbInterface* interface, void* context
     if(interface != NULL) {
         interface->init(&udev, interface, context);
         usbd_reg_event(&udev, usbd_evt_reset, reset_evt);
-        //FURI_LOG_I(TAG, "USB Mode change done");
+        FURI_LOG_I(TAG, "USB Mode change done");
         usb.enabled = true;
     }
 }
@@ -360,7 +360,7 @@ static void usb_process_mode_change(FuriHalUsbInterface* interface, void* contex
 static void usb_process_mode_reinit(void) {
     // Temporary disable callback to avoid getting false reset events
     usbd_reg_event(&udev, usbd_evt_reset, NULL);
-    //FURI_LOG_I(TAG, "USB Reinit");
+    FURI_LOG_I(TAG, "USB Reinit");
     susp_evt(&udev, 0, 0);
     usbd_connect(&udev, false);
     usb.enabled = false;
@@ -388,7 +388,7 @@ static void usb_process_enable(bool enable) {
         if((!usb.enabled) && (usb.interface != NULL)) {
             usbd_connect(&udev, true);
             usb.enabled = true;
-            //FURI_LOG_I(TAG, "USB Enable");
+            FURI_LOG_I(TAG, "USB Enable");
         }
     } else {
         if(usb.enabled) {
@@ -396,7 +396,7 @@ static void usb_process_enable(bool enable) {
             usbd_connect(&udev, false);
             usb.enabled = false;
             usb.request_pending = false;
-            //FURI_LOG_I(TAG, "USB Disable");
+            FURI_LOG_I(TAG, "USB Disable");
         }
     }
 }
@@ -411,11 +411,11 @@ static void usb_process_message(UsbApiEventMessage* message) {
         message->return_data->void_value = usb.interface;
         break;
     case UsbApiEventTypeLock:
-        //FURI_LOG_I(TAG, "Mode lock");
+        FURI_LOG_I(TAG, "Mode lock");
         usb.mode_lock = true;
         break;
     case UsbApiEventTypeUnlock:
-        //FURI_LOG_I(TAG, "Mode unlock");
+        FURI_LOG_I(TAG, "Mode unlock");
         usb.mode_lock = false;
         break;
     case UsbApiEventTypeIsLocked:

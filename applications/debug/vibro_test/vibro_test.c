@@ -41,17 +41,17 @@ int32_t vibro_test_app(void* p) {
 
     while(furi_message_queue_get(event_queue, &event, FuriWaitForever) == FuriStatusOk) {
         if(event.type == InputTypeShort && event.key == InputKeyBack) {
-            
-            //notification_message(notification, &sequence_reset_green);
+            notification_message(notification, &sequence_reset_vibro);
+            notification_message(notification, &sequence_reset_green);
             break;
         }
         if(event.key == InputKeyOk) {
             if(event.type == InputTypePress) {
-                
-                ////notification_message(notification, &sequence_set_green_255);
+                notification_message(notification, &sequence_set_vibro_on);
+                notification_message(notification, &sequence_set_green_255);
             } else if(event.type == InputTypeRelease) {
-                
-                //notification_message(notification, &sequence_reset_green);
+                notification_message(notification, &sequence_reset_vibro);
+                notification_message(notification, &sequence_reset_green);
             }
         }
     }
