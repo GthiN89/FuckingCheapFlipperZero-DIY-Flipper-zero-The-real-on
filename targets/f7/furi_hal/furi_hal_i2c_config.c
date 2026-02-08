@@ -74,10 +74,11 @@ FuriHalI2cBus furi_hal_i2c_bus_external = {
 };
 
 void furi_hal_i2c_bus_handle_power_event(
-     const FuriHalI2cBusHandle* handle,
+    const FuriHalI2cBusHandle* handle,
      FuriHalI2cBusHandleEvent event) {
         UNUSED(handle);
         UNUSED(event);
+        
     // if(event == FuriHalI2cBusHandleEventActivate) {
     //     furi_hal_gpio_init_ex(
     //         &gpio_i2c_power_sda,
@@ -119,7 +120,7 @@ void furi_hal_i2c_bus_handle_power_event(
     //         &gpio_i2c_power_sda, GpioModeAnalog, GpioPullNo, GpioSpeedLow, GpioAltFnUnused);
     //     furi_hal_gpio_init_ex(
     //         &gpio_i2c_power_scl, GpioModeAnalog, GpioPullNo, GpioSpeedLow, GpioAltFnUnused);
-    // // }
+    // }
 }
 
 const FuriHalI2cBusHandle furi_hal_i2c_handle_power = {

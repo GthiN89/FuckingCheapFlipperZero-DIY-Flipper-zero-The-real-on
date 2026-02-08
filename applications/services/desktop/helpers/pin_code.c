@@ -12,17 +12,17 @@ static const NotificationSequence sequence_pin_fail = {
     &message_display_backlight_on,
 
     &message_red_255,
-    
+    &message_vibro_on,
     &message_delay_100,
-    
+    &message_vibro_off,
     &message_red_0,
 
     &message_delay_250,
 
     &message_red_255,
-    
+    &message_vibro_on,
     &message_delay_100,
-    
+    &message_vibro_off,
     &message_red_0,
     NULL,
 };

@@ -63,3 +63,81 @@ This is the audacity I'm proud of. Fuck you, this is what I do.
 Thank you for your attention.
 
 Monero: 47i8hG1RHr8Pej7wAZERzdcF9k4EmTH2SV4Tn5pResrmBPTs3KwMthbTbwbuoLt2Y9PcBNCLskvrdCAVCPVL4rD6GYkMs9A
+
+
+---
+
+## Technical Pinout Documentation (Nucleus Dark MK1)
+
+### Summary of Functionality
+
+This hardware iteration (MK1) has been confirmed to support the following core features:
+
+*   **Sub-GHz Radio:** The internal CC1101 module is fully functional.
+*   **Near-Field Communication (NFC):** The ST25R3916 module is functional.
+*   **External Header:** The external header pins are functional, providing access to SPI, UART, and general purpose I/O. **External CC1101 modules** connected via this header are confirmed to work.
+*   **Note on NRF24:** External NRF24 modules are **not yet supported** due to missing or unadapted driver implementation in the current firmware.
+*   **Missing Peripherals:** Speaker, Vibro Motor, and 125kHz RFID are not implemented or utilized by the hardware/firmware.
+
+---
+
+### Pinout Table
+
+The following table maps the critical functions to the corresponding microcontroller pins as defined in the source code (Port/Pin format).
+
+| Function/Module | Source Variable | Port.Pin | Primary Use |
+| :--- | :--- | :--- | :--- |
+| **Buttons (PISO)** | `gpio_button_sr_latch` | `GPIOH.3` | Shift Register Latch/CS (Control) |
+| **Button IRQ** | `gpio_button_IRQ` | *(Pin not defined in header)* | Interrupt from PISO Shift Register |
+| **Display Chip Select (CS)** | `gpio_display_cs` | `GPIOA.3` | SPI Bus 1 (Display) CS |
+| **Display Data/Command (DI)** | `gpio_display_di` | `GPIOB.1` | Display Data/Command Control |
+| **Display Reset (RST)** | `gpio_display_rst_n` | `GPIOB.0` | Display Reset |
+| **Sub-GHz CC1101 CS** | `gpio_subghz_cs` | `GPIOA.15` | SPI Bus 1 (Sub-GHz) CS |
+| **Sub-GHz CC1101 G0** | `gpio_cc1101_g0` | `GPIOA.1` | CC1101 G0 Interrupt Line |
+| **NFC Chip Select (CS)** | `gpio_nfc_cs` | `GPIOE.4` | SPI Bus 1 (NFC) CS |
+| **NFC IRQ** | `gpio_nfc_irq_rfid_pull` | `GPIOA.2` | NFC Interrupt Line |
+| **SD Card Chip Select (CS)** | `gpio_sdcard_cs` | `GPIOA.10` | SPI Bus 2 (SD Card) CS |
+| **Infrared RX** | `gpio_infrared_rx` | `GPIOA.0` | Infrared Receiver |
+| **Infrared TX** | `gpio_infrared_tx` | `GPIOB.9` | Infrared Transmitter |
+| **iButton** | `gpio_ibutton` | `GPIOB.8` | 1-Wire iButton Interface |
+
+### Input and Button Implementation
+
+The input system utilizes a **PISO (Parallel-In, Serial-Out) shift register** to read all directional buttons and the OK/Back keys, serializing the data over the main SPI bus to conserve GPIO pins.
+
+| Function | Source Variable | Port.Pin | Notes |
+| :--- | :--- | :--- | :--- |
+| **SPI Clock (SCK)** | `gpio_spi_sck` | `GPIOB.3` | Shared with External Header Pin 4 |
+| **SPI Master Out, Slave In (MOSI)** | `gpio_spi_mosi` | `GPIOB.5` | Shared with External Header Pin 6 |
+| **SPI Master In, Slave Out (MISO)** | `gpio_spi_miso` | `GPIOB.4` | Shared with External Header Pin 5 |
+| **PISO Latch/CS** | `gpio_button_sr_latch` | `GPIOH.3` | Latches button states for reading |
+
+The buttons decode as the following bit-masks when read from the shift register (active high, after inversion):
+
+| Key | Binary (D7...D0) | Hex |
+| :--- | :--- | :--- |
+| **Right** | `00010011` | `0x13` |
+| **OK** | `00100011` | `0x23` |
+| **Left** | `10000011` | `0x83` |
+| **Up** | `01000011` | `0x43` |
+| **Down** | `00001011` | `0x0B` |
+| **Back** | `00000111` | `0x07` |
+
+### External Header Pinout
+
+The external header provides access to the primary SPI bus and the main USART channel, in addition to several general-purpose I/O (GPIO) pins. This header is confirmed to work and allows the use of external modules, such as a **CC1101**, but not yet the NRF24.
+
+| Header Pin (Number) | Source Variable | Port.Pin | Function |
+| :--- | :--- | :--- | :--- |
+| **1** | `gpio_ext_pc0` | `GPIOA.7` | General Purpose I/O (GPIO) |
+| **2** | `gpio_ext_pc1` | `GPIOA.6` | General Purpose I/O (GPIO) |
+| **3** | `gpio_ext_pc3` | `GPIOA.8` | General Purpose I/O (GPIO) |
+| **4** | `gpio_ext_pb3` | `GPIOB.3` | **SPI SCK** |
+| **5** | `gpio_ext_pa6` | `GPIOB.4` | **SPI MISO** |
+| **6** | `gpio_ext_pa7` | `GPIOB.5` | **SPI MOSI** |
+| **7** | `gpio_usart_rx` | `GPIOB.7` | **USART1 RX** |
+| **8** | `gpio_usart_tx` | `GPIOB.6` | **USART1 TX** |
+| **VCC** | N/A | VCC | Power Rail |
+| **GND** | N/A | GND | Ground |
+
+**Note:** Pin numbers 4, 5, and 6 are directly connected to the main SPI bus and are shared with the internal peripherals (Display, Sub-GHz, NFC, and Input Shift Register). They are typically used for connecting external modules.

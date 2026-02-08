@@ -13,7 +13,7 @@ extern const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_8m_NFC;
 extern const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_8m;
 
 /** Preset for ST7567 (Display) */
-//extern const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_4m;
+
 
 /** Preset for SdCard in fast mode */
 extern const LL_SPI_InitTypeDef furi_hal_spi_preset_1edge_low_16m;

@@ -893,13 +893,13 @@ static FuriStatus sd_device_write(const uint32_t* buff, uint32_t sector, uint32_
 
 void furi_hal_sd_presence_init(void) {
     // low speed input with pullup
-   // furi_hal_gpio_init(&gpio_sdcard_cd, GpioModeInput, GpioPullUp, GpioSpeedLow);
+  //  furi_hal_gpio_init(&gpio_sdcard_cd, GpioModeInput, GpioPullUp, GpioSpeedLow);
 }
 
 static void furi_hal_sd_present_pin_set_low(void) {
     // low speed input with pullup
   //  furi_hal_gpio_init_simple(&gpio_sdcard_cd, GpioModeOutputOpenDrain);
-//furi_hal_gpio_write(&gpio_sdcard_cd, 0);
+  //  furi_hal_gpio_write(&gpio_sdcard_cd, 0);
 }
 
 bool furi_hal_sd_is_present(void) {
@@ -908,7 +908,7 @@ bool furi_hal_sd_is_present(void) {
 }
 
 uint8_t furi_hal_sd_max_mount_retry_count(void) {
-    return 3;
+    return 10;
 }
 
 FuriStatus furi_hal_sd_init(bool power_reset) {

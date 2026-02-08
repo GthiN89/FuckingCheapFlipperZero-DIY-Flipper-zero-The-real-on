@@ -567,6 +567,8 @@ static FuriHalSubGhzPreset subghz_cli_get_preset_name(const char* preset_name) {
         preset = FuriHalSubGhzPresetOok650Async;
     } else if(!strcmp(preset_name, "FuriHalSubGhzPreset2FSKDev238Async")) {
         preset = FuriHalSubGhzPreset2FSKDev238Async;
+    } else if(!strcmp(preset_name, "FuriHalSubGhzPreset2FSKDev12KAsync")) {
+        preset = FuriHalSubGhzPreset2FSKDev12KAsync;
     } else if(!strcmp(preset_name, "FuriHalSubGhzPreset2FSKDev476Async")) {
         preset = FuriHalSubGhzPreset2FSKDev476Async;
     } else if(!strcmp(preset_name, "FuriHalSubGhzPresetCustom")) {
@@ -941,6 +943,13 @@ static void subghz_cli_command_chat(PipeSide* pipe, FuriString* args) {
             return;
         }
     }
+    if(!furi_hal_region_is_frequency_allowed(frequency)) {
+        printf(
+            "In your settings/region, only reception on this frequency (%lu) is allowed,\r\n"
+            "the actual operation of the application is not possible\r\n ",
+            frequency);
+        return;
+    }
     subghz_devices_init();
     const SubGhzDevice* device = subghz_cli_command_get_device(&device_ind);
     if(!subghz_devices_is_frequency_valid(device, frequency)) {
@@ -948,13 +957,6 @@ static void subghz_cli_command_chat(PipeSide* pipe, FuriString* args) {
             "Frequency must be in " SUBGHZ_FREQUENCY_RANGE_STR " range, not %lu\r\n", frequency);
         subghz_devices_deinit();
         subghz_cli_radio_device_power_off();
-        return;
-    }
-    if(!furi_hal_region_is_frequency_allowed(frequency)) {
-        printf(
-            "In your settings/region, only reception on this frequency (%lu) is allowed,\r\n"
-            "the actual operation of the application is not possible\r\n ",
-            frequency);
         return;
     }
 

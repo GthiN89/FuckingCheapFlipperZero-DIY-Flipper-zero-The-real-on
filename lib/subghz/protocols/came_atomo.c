@@ -39,6 +39,8 @@ typedef enum {
     CameAtomoDecoderStepDecoderData,
 } CameAtomoDecoderStep;
 
+static uint8_t came_atomo_counter_mode = 0;
+
 const SubGhzProtocolDecoder subghz_protocol_came_atomo_decoder = {
     .alloc = subghz_protocol_decoder_came_atomo_alloc,
     .free = subghz_protocol_decoder_came_atomo_free,
@@ -187,14 +189,51 @@ static void subghz_protocol_encoder_came_atomo_get_upload(
 
     uint8_t pack[8] = {};
 
-    if(instance->generic.cnt < 0xFFFF) {
-        if((instance->generic.cnt + furi_hal_subghz_get_rolling_counter_mult()) > 0xFFFF) {
-            instance->generic.cnt = 0;
+    if(came_atomo_counter_mode == 0) {
+        // Check for OFEX (overflow experimental) mode
+        if(furi_hal_subghz_get_rolling_counter_mult() != -0x7FFFFFFF) {
+            // standart counter mode. PULL data from subghz_block_generic_global variables
+            if(!subghz_block_generic_global_counter_override_get(&instance->generic.cnt)) {
+                // if counter_override_get return FALSE then counter was not changed and we increase counter by standart mult value
+                if((instance->generic.cnt + furi_hal_subghz_get_rolling_counter_mult()) > 0xFFFF) {
+                    instance->generic.cnt = 0;
+                } else {
+                    instance->generic.cnt += furi_hal_subghz_get_rolling_counter_mult();
+                }
+            }
         } else {
-            instance->generic.cnt += furi_hal_subghz_get_rolling_counter_mult();
+            //OFFEX mode
+            if((instance->generic.cnt + 0x1) > 0xFFFF) {
+                instance->generic.cnt = 0;
+            } else if(instance->generic.cnt >= 0x1 && instance->generic.cnt != 0xFFFE) {
+                instance->generic.cnt = 0xFFFE;
+            } else {
+                instance->generic.cnt++;
+            }
         }
-    } else if((instance->generic.cnt >= 0xFFFF) && (furi_hal_subghz_get_rolling_counter_mult() != 0)) {
-        instance->generic.cnt = 0;
+    } else if(came_atomo_counter_mode == 1) {
+        // Mode 1
+        // 0000 / 0001 / FFFE / FFFF
+        if((instance->generic.cnt + 0x1) > 0xFFFF) {
+            instance->generic.cnt = 0;
+        } else if(instance->generic.cnt >= 0x1 && instance->generic.cnt != 0xFFFE) {
+            instance->generic.cnt = 0xFFFE;
+        } else {
+            instance->generic.cnt++;
+        }
+    } else if(came_atomo_counter_mode == 2) {
+        // Mode 2
+        // 0x807B / 0x807C / 0x007B / 0x007C
+        if(instance->generic.cnt != 0x807B && instance->generic.cnt != 0x807C &&
+           instance->generic.cnt != 0x007B) {
+            instance->generic.cnt = 0x807B;
+        } else if(instance->generic.cnt == 0x807C) {
+            instance->generic.cnt = 0x007B;
+        } else {
+            instance->generic.cnt++;
+        }
+    } else {
+        // Mode 3 - Freeze counter
     }
 
     // Save original button for later use
@@ -337,9 +376,21 @@ SubGhzProtocolStatus
             break;
         }
 
-        //optional parameter parameter
+        // Optional value
         flipper_format_read_uint32(
             flipper_format, "Repeat", (uint32_t*)&instance->encoder.repeat, 1);
+
+        if(!flipper_format_rewind(flipper_format)) {
+            FURI_LOG_E(TAG, "Rewind error");
+            break;
+        }
+
+        uint32_t tmp_counter_mode;
+        if(flipper_format_read_uint32(flipper_format, "CounterMode", &tmp_counter_mode, 1)) {
+            came_atomo_counter_mode = (uint8_t)tmp_counter_mode;
+        } else {
+            came_atomo_counter_mode = 0;
+        }
 
         subghz_protocol_came_atomo_remote_controller(&instance->generic);
         subghz_protocol_encoder_came_atomo_get_upload(instance, instance->generic.btn);
@@ -420,8 +471,11 @@ void subghz_protocol_decoder_came_atomo_feed(void* context, bool level, uint32_t
     ManchesterEvent event = ManchesterEventReset;
     switch(instance->decoder.parser_step) {
     case CameAtomoDecoderStepReset:
-        if((!level) && (DURATION_DIFF(duration, subghz_protocol_came_atomo_const.te_long * 60) <
-                        subghz_protocol_came_atomo_const.te_delta * 40)) {
+        // There are two known options for the header: 72K us (TOP42R, TOP44R) or 12k us (found on TOP44RBN)
+        if((!level) && ((DURATION_DIFF(duration, subghz_protocol_came_atomo_const.te_long * 10) <
+                         subghz_protocol_came_atomo_const.te_delta * 20) ||
+                        (DURATION_DIFF(duration, subghz_protocol_came_atomo_const.te_long * 60) <
+                         subghz_protocol_came_atomo_const.te_delta * 40))) {
             //Found header CAME
             instance->decoder.parser_step = CameAtomoDecoderStepDecoderData;
             instance->decoder.decode_data = 0;
@@ -738,10 +792,32 @@ SubGhzProtocolStatus
     subghz_protocol_decoder_came_atomo_deserialize(void* context, FlipperFormat* flipper_format) {
     furi_assert(context);
     SubGhzProtocolDecoderCameAtomo* instance = context;
-    return subghz_block_generic_deserialize_check_count_bit(
-        &instance->generic,
-        flipper_format,
-        subghz_protocol_came_atomo_const.min_count_bit_for_found);
+
+    SubGhzProtocolStatus status = SubGhzProtocolStatusOk;
+    status = subghz_block_generic_deserialize(&instance->generic, flipper_format);
+    if(status != SubGhzProtocolStatusOk) {
+        FURI_LOG_E(TAG, "Deserialize error");
+        return status;
+    }
+    if(instance->generic.data_count_bit !=
+       subghz_protocol_came_atomo_const.min_count_bit_for_found) {
+        FURI_LOG_E(TAG, "Wrong number of bits in key");
+        return SubGhzProtocolStatusErrorValueBitCount;
+    }
+
+    if(!flipper_format_rewind(flipper_format)) {
+        FURI_LOG_E(TAG, "Rewind error");
+        return SubGhzProtocolStatusError;
+    }
+
+    uint32_t tmp_counter_mode;
+    if(flipper_format_read_uint32(flipper_format, "CounterMode", &tmp_counter_mode, 1)) {
+        came_atomo_counter_mode = (uint8_t)tmp_counter_mode;
+    } else {
+        came_atomo_counter_mode = 0;
+    }
+
+    return status;
 }
 
 void subghz_protocol_decoder_came_atomo_get_string(void* context, FuriString* output) {
@@ -751,12 +827,18 @@ void subghz_protocol_decoder_came_atomo_get_string(void* context, FuriString* ou
     uint32_t code_found_hi = instance->generic.data >> 32;
     uint32_t code_found_lo = instance->generic.data & 0x00000000ffffffff;
 
+    // push protocol data to global variable
+    subghz_block_generic_global.cnt_is_available = true;
+    subghz_block_generic_global.cnt_length_bit = 16;
+    subghz_block_generic_global.current_cnt = instance->generic.cnt;
+    //
+
     furi_string_cat_printf(
         output,
         "%s %db\r\n"
         "Key:%08lX%08lX\r\n"
         "Sn:0x%08lX       Btn:%01X\r\n"
-        "Cnt:0x%04lX\r\n"
+        "Cnt:%04lX\r\n"
         "Btn_Cnt:0x%02X",
 
         instance->generic.protocol_name,

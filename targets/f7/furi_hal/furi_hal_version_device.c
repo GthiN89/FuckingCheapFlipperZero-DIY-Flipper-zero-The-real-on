@@ -5,7 +5,7 @@ bool furi_hal_version_do_i_belong_here(void) {
 }
 
 const char* furi_hal_version_get_model_name(void) {
-    return "FcFz by Nucleus Dark";
+    return "Flipper Zero";
 }
 
 const char* furi_hal_version_get_model_code(void) {

@@ -116,7 +116,7 @@ static void storage_settings_scene_benchmark(StorageSettings* app) {
 
     NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
     notification_message(notification, &sequence_single_vibro);
-    ////notification_message(notification, &sequence_set_green_255);
+    notification_message(notification, &sequence_set_green_255);
     notification_message(notification, &sequence_success);
     furi_record_close(RECORD_NOTIFICATION);
 
@@ -176,8 +176,8 @@ void storage_settings_scene_benchmark_on_exit(void* context) {
     StorageSettings* app = context;
     DialogEx* dialog_ex = app->dialog_ex;
 
-    //NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
-    //notification_message(notification, &sequence_reset_green);
+    NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
+    notification_message(notification, &sequence_reset_green);
     furi_record_close(RECORD_NOTIFICATION);
 
     dialog_ex_reset(dialog_ex);

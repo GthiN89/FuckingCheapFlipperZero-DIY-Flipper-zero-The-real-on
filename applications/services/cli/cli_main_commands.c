@@ -329,7 +329,8 @@ void cli_command_vibro(PipeSide* pipe, FuriString* args, void* context) {
     UNUSED(context);
 
     if(!furi_string_cmp(args, "0")) {
-      //  NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
+        NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
+        notification_message_block(notification, &sequence_reset_vibro);
         furi_record_close(RECORD_NOTIFICATION);
     } else if(!furi_string_cmp(args, "1")) {
         if(furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode)) {
@@ -337,8 +338,12 @@ void cli_command_vibro(PipeSide* pipe, FuriString* args, void* context) {
             return;
         }
 
-       // NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
-
+        NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
+        if(notification->settings.vibro_on) {
+            notification_message_block(notification, &sequence_set_vibro_on);
+        } else {
+            printf("Vibro is disabled in settings. Enable it to control vibration.");
+        }
 
         furi_record_close(RECORD_NOTIFICATION);
     } else {
