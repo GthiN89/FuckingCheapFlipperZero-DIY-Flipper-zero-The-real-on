@@ -53,14 +53,17 @@ static void
 
     // apply if current layer is internal
     if(layer->index == LayerInternal) {
-        furi_hal_light_set(layer->light, layer->value[LayerInternal]);
+        /* REMOVED: HW light call */
+        // furi_hal_light_set(layer->light, layer->value[LayerInternal]);
     }
 }
 
 static void notification_apply_lcd_contrast(NotificationApp* app) {
-    Gui* gui = furi_record_open(RECORD_GUI);
-    u8x8_d_st756x_set_contrast(&gui->canvas->fb.u8x8, app->settings.contrast);
-    furi_record_close(RECORD_GUI);
+    /* REMOVED: HW Contrast call */
+    UNUSED(app);
+    // Gui* gui = furi_record_open(RECORD_GUI);
+    // u8x8_d_st756x_set_contrast(&gui->canvas->fb.u8x8, app->settings.contrast);
+    // furi_record_close(RECORD_GUI);
 }
 
 static bool notification_is_any_led_layer_internal_and_not_empty(NotificationApp* app) {
@@ -88,8 +91,9 @@ static void notification_apply_notification_led_layer(
     layer->index = LayerNotification;
     // set layer
     layer->value[LayerNotification] = layer_value;
-    // apply
-    furi_hal_light_set(layer->light, layer->value[LayerNotification]);
+    
+    /* REMOVED: HW light call */
+    // furi_hal_light_set(layer->light, layer->value[LayerNotification]);
 }
 
 static void notification_reset_notification_led_layer(NotificationLedLayer* layer) {
@@ -101,8 +105,8 @@ static void notification_reset_notification_led_layer(NotificationLedLayer* laye
     // set layer
     layer->index = LayerInternal;
 
-    // apply
-    furi_hal_light_set(layer->light, layer->value[LayerInternal]);
+    /* REMOVED: HW light call */
+    // furi_hal_light_set(layer->light, layer->value[LayerInternal]);
 }
 
 static void notification_reset_notification_layer(
@@ -110,7 +114,8 @@ static void notification_reset_notification_layer(
     uint8_t reset_mask,
     float display_brightness_set) {
     if(reset_mask & reset_blink_mask) {
-        furi_hal_light_blink_stop();
+        /* REMOVED: HW Blink call */
+        // furi_hal_light_blink_stop();
     }
     if(reset_mask & reset_red_mask) {
         notification_reset_notification_led_layer(&app->led[0]);
@@ -129,7 +134,8 @@ static void notification_reset_notification_layer(
     }
     if(reset_mask & reset_display_mask) {
         if(!float_is_equal(display_brightness_set, app->settings.display_brightness)) {
-            furi_hal_light_set(LightBacklight, app->settings.display_brightness * 0xFF);
+            /* REMOVED: HW Backlight call */
+            // furi_hal_light_set(LightBacklight, app->settings.display_brightness * 0xFF);
         }
         furi_timer_start(app->display_timer, notification_settings_display_off_delay_ticks(app));
     }
@@ -158,28 +164,36 @@ static uint32_t notification_settings_display_off_delay_ticks(NotificationApp* a
 
 // generics
 static void notification_vibro_on(bool force) {
-    if(!furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode) || force) {
-        furi_hal_vibro_on(true);
-    }
+    /* REMOVED: HW Vibro call */
+    UNUSED(force);
+    // if(!furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode) || force) {
+    //     furi_hal_vibro_on(true);
+    // }
 }
 
 static void notification_vibro_off(void) {
-    furi_hal_vibro_on(false);
+    /* REMOVED: HW Vibro call */
+    // furi_hal_vibro_on(false);
 }
 
 static void notification_sound_on(float freq, float volume, bool force) {
-    if(!furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode) || force) {
-        if(furi_hal_speaker_is_mine() || furi_hal_speaker_acquire(30)) {
-            furi_hal_speaker_start(freq, volume);
-        }
-    }
+    /* REMOVED: HW Speaker calls */
+    UNUSED(freq);
+    UNUSED(volume);
+    UNUSED(force);
+    // if(!furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode) || force) {
+    //     if(furi_hal_speaker_is_mine() || furi_hal_speaker_acquire(30)) {
+    //         furi_hal_speaker_start(freq, volume);
+    //     }
+    // }
 }
 
 static void notification_sound_off(void) {
-    if(furi_hal_speaker_is_mine()) {
-        furi_hal_speaker_stop();
-        furi_hal_speaker_release();
-    }
+    /* REMOVED: HW Speaker calls */
+    // if(furi_hal_speaker_is_mine()) {
+    //     furi_hal_speaker_stop();
+    //     furi_hal_speaker_release();
+    // }
 }
 
 // display timer
@@ -211,9 +225,6 @@ static void notification_process_notification_message(
     while(notification_message != NULL) {
         switch(notification_message->type) {
         case NotificationMessageTypeLedDisplayBacklight:
-            // if on - switch on and start timer
-            // if off - switch off and stop timer
-            // on timer - switch off
             if(notification_message->data.led.value > 0x00) {
                 notification_apply_notification_led_layer(
                     &app->display,
@@ -249,34 +260,27 @@ static void notification_process_notification_message(
             }
             break;
         case NotificationMessageTypeLedRed:
-            // store and send on delay or after seq
             led_active = true;
             led_values[0] = notification_message->data.led.value;
             app->led[0].value_last[LayerNotification] = led_values[0];
             reset_mask |= reset_red_mask;
             break;
         case NotificationMessageTypeLedGreen:
-            // store and send on delay or after seq
             led_active = true;
             led_values[1] = notification_message->data.led.value;
             app->led[1].value_last[LayerNotification] = led_values[1];
             reset_mask |= reset_green_mask;
             break;
         case NotificationMessageTypeLedBlue:
-            // store and send on delay or after seq
             led_active = true;
             led_values[2] = notification_message->data.led.value;
             app->led[2].value_last[LayerNotification] = led_values[2];
             reset_mask |= reset_blue_mask;
             break;
         case NotificationMessageTypeLedBlinkStart:
-            // store and send on delay or after seq
             led_active = true;
-            furi_hal_light_blink_start(
-                notification_message->data.led_blink.color,
-                app->settings.led_brightness * 255,
-                notification_message->data.led_blink.on_time,
-                notification_message->data.led_blink.period);
+            /* REMOVED: HW Blink call */
+            // furi_hal_light_blink_start(...);
             reset_mask |= reset_blink_mask;
             reset_mask |= reset_red_mask;
             reset_mask |= reset_green_mask;
@@ -284,10 +288,12 @@ static void notification_process_notification_message(
             break;
         case NotificationMessageTypeLedBlinkColor:
             led_active = true;
-            furi_hal_light_blink_set_color(notification_message->data.led_blink.color);
+            /* REMOVED: HW Blink call */
+            // furi_hal_light_blink_set_color(...);
             break;
         case NotificationMessageTypeLedBlinkStop:
-            furi_hal_light_blink_stop();
+            /* REMOVED: HW Blink call */
+            // furi_hal_light_blink_stop();
             reset_mask &= ~reset_blink_mask;
             reset_mask |= reset_red_mask;
             reset_mask |= reset_green_mask;
@@ -318,15 +324,12 @@ static void notification_process_notification_message(
                     notification_apply_notification_leds(app, led_off_values);
                     furi_delay_ms(minimal_delay);
                 }
-
                 led_active = false;
-
                 notification_apply_notification_leds(app, led_values);
                 reset_mask |= reset_red_mask;
                 reset_mask |= reset_green_mask;
                 reset_mask |= reset_blue_mask;
             }
-
             furi_delay_ms(notification_message->data.delay.length);
             break;
         case NotificationMessageTypeDoNotReset:
@@ -361,7 +364,6 @@ static void notification_process_notification_message(
         notification_message = (*message->sequence)[notification_message_index];
     }
 
-    // send and do minimal delay
     if(led_active) {
         bool need_minimal_delay = false;
         if(notification_is_any_led_layer_internal_and_not_empty(app)) {

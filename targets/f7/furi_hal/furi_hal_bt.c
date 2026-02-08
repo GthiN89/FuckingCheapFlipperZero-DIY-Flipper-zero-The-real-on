@@ -222,7 +222,6 @@ void furi_hal_bt_reinit(void) {
     FURI_LOG_I(TAG, "Reset SHCI");
     furi_check(ble_glue_reinit_c2());
     ble_glue_stop();
-     FURI_LOG_I(TAG, "BLE 1");
 
     // enterprise delay
     furi_delay_ms(100);
@@ -232,12 +231,11 @@ void furi_hal_bt_reinit(void) {
     furi_hal_bus_disable(FuriHalBusAES2);
     furi_hal_bus_disable(FuriHalBusPKA);
     furi_hal_bus_disable(FuriHalBusCRC);
- FURI_LOG_I(TAG, "BLE 2");
+
     furi_hal_bt_init();
     furi_hal_bt_unlock_core2();
     furi_hal_bt_start_radio_stack();
     furi_hal_power_insomnia_exit();
-     FURI_LOG_I(TAG, "BLE done");
 }
 
 FuriHalBleProfileBase* furi_hal_bt_change_app(

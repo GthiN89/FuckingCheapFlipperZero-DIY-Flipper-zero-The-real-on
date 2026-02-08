@@ -17,6 +17,14 @@
 #define POWER_VBUS_LOW_THRESHOLD   (4.0f)
 #define POWER_HEALTH_LOW_THRESHOLD (70U)
 
+/* HARDCODED FAKE DATA - Edit these to change the displayed status */
+#define FAKE_CHARGE_PCT     85
+#define FAKE_HEALTH_PCT     100
+#define FAKE_IS_CHARGING    false
+#define FAKE_IS_GAUGE_OK    true
+#define FAKE_VBUS_VOLTAGE   0.0f
+#define FAKE_BATTERY_VOLT   4.1f
+
 static void power_draw_battery_callback(Canvas* canvas, void* context) {
     furi_assert(context);
     Power* power = context;
@@ -254,23 +262,24 @@ static ViewPort* power_battery_view_port_alloc(Power* power) {
 }
 
 static bool power_update_info(Power* power) {
+    /* REMOVED: All furi_hal_power_* calls removed to prevent HW pooling */
     const PowerInfo info = {
-        .is_charging = furi_hal_power_is_charging(),
-        .gauge_is_ok = furi_hal_power_gauge_is_ok(),
-        .is_shutdown_requested = furi_hal_power_is_shutdown_requested(),
-        .is_otg_enabled = furi_hal_power_is_otg_enabled(),
-        .charge = furi_hal_power_get_pct(),
-        .health = furi_hal_power_get_bat_health_pct(),
-        .capacity_remaining = furi_hal_power_get_battery_remaining_capacity(),
-        .capacity_full = furi_hal_power_get_battery_full_capacity(),
-        .current_charger = furi_hal_power_get_battery_current(FuriHalPowerICCharger),
-        .current_gauge = furi_hal_power_get_battery_current(FuriHalPowerICFuelGauge),
-        .voltage_battery_charge_limit = furi_hal_power_get_battery_charge_voltage_limit(),
-        .voltage_charger = furi_hal_power_get_battery_voltage(FuriHalPowerICCharger),
-        .voltage_gauge = furi_hal_power_get_battery_voltage(FuriHalPowerICFuelGauge),
-        .voltage_vbus = furi_hal_power_get_usb_voltage(),
-        .temperature_charger = furi_hal_power_get_battery_temperature(FuriHalPowerICCharger),
-        .temperature_gauge = furi_hal_power_get_battery_temperature(FuriHalPowerICFuelGauge),
+        .is_charging = FAKE_IS_CHARGING,
+        .gauge_is_ok = FAKE_IS_GAUGE_OK,
+        .is_shutdown_requested = false,
+        .is_otg_enabled = false,
+        .charge = FAKE_CHARGE_PCT,
+        .health = FAKE_HEALTH_PCT,
+        .capacity_remaining = 1800,
+        .capacity_full = 2100,
+        .current_charger = 0,
+        .current_gauge = -150,
+        .voltage_battery_charge_limit = 4.2f,
+        .voltage_charger = 0.0f,
+        .voltage_gauge = FAKE_BATTERY_VOLT,
+        .voltage_vbus = FAKE_VBUS_VOLTAGE,
+        .temperature_charger = 25.0f,
+        .temperature_gauge = 25.0f,
     };
 
     const bool need_refresh = (power->info.charge != info.charge) ||
@@ -282,8 +291,9 @@ static bool power_update_info(Power* power) {
 static void power_check_charging_state(Power* power) {
     NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
 
-    if(furi_hal_power_is_charging()) {
-        if((power->info.charge == 100) || (furi_hal_power_is_charging_done())) {
+    /* REMOVED: HAL call replaced with power->info check */
+    if(power->info.is_charging) {
+        if((power->info.charge == 100)) {
             if(power->state != PowerStateCharged) {
                 notification_internal_message(notification, &sequence_charged);
                 power->state = PowerStateCharged;
@@ -363,27 +373,18 @@ static void power_check_battery_level_change(Power* power) {
 }
 
 static void power_handle_shutdown(Power* power) {
-    furi_hal_power_off();
+    /* REMOVED: Hardware call removed */
+    FURI_LOG_I(TAG, "Fake Shutdown triggered");
     // Notify user if USB is plugged
     view_holder_send_to_front(power->view_holder);
     view_holder_set_view(
         power->view_holder, power_unplug_usb_get_view(power->view_power_unplug_usb));
     furi_delay_ms(100);
-    furi_halt("Disconnect USB for safe shutdown");
 }
 
 static void power_handle_reboot(PowerBootMode mode) {
-    if(mode == PowerBootModeNormal) {
-        update_operation_disarm();
-    } else if(mode == PowerBootModeDfu) {
-        furi_hal_rtc_set_boot_mode(FuriHalRtcBootModeDfu);
-    } else if(mode == PowerBootModeUpdateStart) {
-        furi_hal_rtc_set_boot_mode(FuriHalRtcBootModePreUpdate);
-    } else {
-        furi_crash();
-    }
-
-    furi_hal_power_reset();
+    /* REMOVED: Hardware calls removed */
+    FURI_LOG_I(TAG, "Fake Reboot triggered: %d", mode);
 }
 
 //start furi timer for autopoweroff
@@ -511,27 +512,8 @@ static void power_message_callback(FuriEventLoopObject* object, void* context) {
         break;
     case PowerMessageTypeSwitchOTG:
         power->is_otg_requested = *msg.bool_param;
-        if(power->is_otg_requested) {
-            // Only try to enable if VBUS voltage is low, otherwise charger will refuse
-            if(power->info.voltage_vbus < 4.5f) {
-                size_t retries = 5;
-                while(retries-- > 0) {
-                    if(furi_hal_power_enable_otg()) {
-                        break;
-                    }
-                }
-                if(!retries) {
-                    FURI_LOG_W(TAG, "Failed to enable OTG, will try later");
-                }
-            } else {
-                FURI_LOG_W(
-                    TAG,
-                    "Postponing OTG enable: VBUS(%0.1f) >= 4.5v",
-                    (double)power->info.voltage_vbus);
-            }
-        } else {
-            furi_hal_power_disable_otg();
-        }
+        /* REMOVED: Physical OTG enable/disable removed */
+        FURI_LOG_D(TAG, "Fake SwitchOTG: %d", power->is_otg_requested);
         break;
     case PowerMessageTypeGetSettings:
         furi_assert(msg.lock);
@@ -557,19 +539,15 @@ static void power_message_callback(FuriEventLoopObject* object, void* context) {
 }
 
 static void power_charge_supress(Power* power) {
-    // if charge_supress_percent selected (not OFF) and current charge level equal or higher than selected level
-    // then we start supression if we not supress it before.
+    /* REMOVED: Hardware suppression calls removed */
     if(power->settings.charge_supress_percent &&
        power->info.charge >= power->settings.charge_supress_percent) {
         if(!power->charge_is_supressed) {
             power->charge_is_supressed = true;
-            furi_hal_power_suppress_charge_enter();
         }
-        // disable supression if charge_supress_percent OFF but charge still supressed
     } else {
         if(power->charge_is_supressed) {
             power->charge_is_supressed = false;
-            furi_hal_power_suppress_charge_exit();
         }
     }
 }
@@ -578,7 +556,7 @@ static void power_tick_callback(void* context) {
     furi_assert(context);
     Power* power = context;
 
-    // Update data from gauge and charger
+    // Update data from hardcoded info
     const bool need_refresh = power_update_info(power);
     // Check low battery level
     power_check_low_battery(power);
@@ -586,7 +564,7 @@ static void power_tick_callback(void* context) {
     power_check_charging_state(power);
     // Check and notify about battery level change
     power_check_battery_level_change(power);
-    // charge supress arm/disarm
+    // charge supress logic (no HW calls)
     power_charge_supress(power);
     // Update battery view port
     view_port_enabled_set(
@@ -594,19 +572,8 @@ static void power_tick_callback(void* context) {
     if(need_refresh) {
         view_port_update(power->battery_view_port);
     }
-    // Check OTG status, disable in case of a fault
-    if(furi_hal_power_check_otg_fault()) {
-        FURI_LOG_E(TAG, "OTG fault detected, disabling OTG");
-        furi_hal_power_disable_otg();
-        power->is_otg_requested = false;
-    }
-
-    // Change OTG state if needed (i.e. after disconnecting USB power)
-    if(power->is_otg_requested &&
-       (!power->info.is_otg_enabled && power->info.voltage_vbus < 4.5f)) {
-        FURI_LOG_D(TAG, "OTG requested but not enabled, enabling OTG");
-        furi_hal_power_enable_otg();
-    }
+    
+    /* REMOVED: OTG fault and HW state logic removed */
 }
 
 static void power_storage_callback(const void* message, void* context) {
@@ -686,13 +653,7 @@ static Power* power_alloc(void) {
 int32_t power_srv(void* p) {
     UNUSED(p);
 
-    if(!furi_hal_is_normal_boot()) {
-        FURI_LOG_W(TAG, "Skipping start in special boot mode");
-
-        furi_thread_suspend(furi_thread_get_current_id());
-        return 0;
-    }
-
+    /* REMOVED: Special boot mode HW check removed */
     Power* power = power_alloc();
 
     // power service settings initialization
