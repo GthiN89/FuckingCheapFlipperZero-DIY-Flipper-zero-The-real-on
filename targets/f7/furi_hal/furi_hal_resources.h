@@ -141,7 +141,7 @@ extern const GpioPin gpio_button_sr_latch;
 //extern const GpioPin gpio_button_sr_latch;
 
 #define CC1101_CS_GPIO_Port GPIOA
-#define CC1101_CS_Pin       LL_GPIO_PIN_15
+#define CC1101_CS_Pin       LL_GPIO_PIN_10
 #define CC1101_G0_GPIO_Port GPIOA
 #define CC1101_G0_Pin       LL_GPIO_PIN_1
 
@@ -172,7 +172,7 @@ extern const GpioPin gpio_button_sr_latch;
 #define PB3_Pin       LL_GPIO_PIN_3
 #define PC0_GPIO_Port GPIOA
 #define PC0_Pin       LL_GPIO_PIN_7 // - PA7 /// PB9 PA10 PB7
-#define PC1_GPIO_Port GPIOA
+#define PC1_GPIO_Port GPIOC
 #define PC1_Pin       LL_GPIO_PIN_6 // - PB4 //// PB8 // PA9 PB6
 #define PC3_GPIO_Port GPIOA
 #define PC3_Pin       LL_GPIO_PIN_8
@@ -196,7 +196,7 @@ extern const GpioPin gpio_button_sr_latch;
 #define SD_CD_GPIO_Port GPIOC
 #define SD_CD_Pin       LL_GPIO_PIN_0
 #define SD_CS_GPIO_Port GPIOA
-#define SD_CS_Pin       LL_GPIO_PIN_10
+#define SD_CS_Pin       LL_GPIO_PIN_15
 
 #define SPEAKER_GPIO_Port GPIOC
 #define SPEAKER_Pin       LL_GPIO_PIN_0
@@ -212,8 +212,8 @@ extern const GpioPin gpio_button_sr_latch;
 #define USART1_RX_Pin  LL_GPIO_PIN_7
 #define USART1_RX_Port GPIOB
 
-#define SPI_MISO_GPIO_Port GPIOB
-#define SPI_MISO_Pin       LL_GPIO_PIN_4
+#define SPI_MISO_GPIO_Port GPIOA
+#define SPI_MISO_Pin       LL_GPIO_PIN_6
 #define SPI_MOSI_GPIO_Port1 GPIOA
 #define SPI_MOSI_Pin1       LL_GPIO_PIN_7
 #define SPI_MOSI_GPIO_Port GPIOB

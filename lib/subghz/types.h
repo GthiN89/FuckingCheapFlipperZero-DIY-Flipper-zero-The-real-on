@@ -144,6 +144,7 @@ typedef enum {
     SubGhzProtocolFilter_NiceFlorS = (1 << 4),
     SubGhzProtocolFilter_Weather = (1 << 5),
     SubGhzProtocolFilter_TPMS = (1 << 6),
+    SubGhzProtocolFilter_Cars = (1 << 7),
 } SubGhzProtocolFilter;
 
 struct SubGhzProtocol {
