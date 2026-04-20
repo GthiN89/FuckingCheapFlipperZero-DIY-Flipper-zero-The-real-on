@@ -1,5 +1,5 @@
 entry,status,name,type,params
-Version,+,87.1,,
+Version,+,87.2,,
 Header,+,applications/drivers/subghz/cc1101_ext/cc1101_ext_interconnect.h,,
 Header,+,applications/main/archive/helpers/archive_helpers_ext.h,,
 Header,+,applications/main/subghz/subghz_fap.h,,
@@ -295,6 +295,7 @@ Header,+,targets/f7/furi_hal/furi_hal_i2c_config.h,,
 Header,+,targets/f7/furi_hal/furi_hal_i2c_types.h,,
 Header,+,targets/f7/furi_hal/furi_hal_ibutton.h,,
 Header,+,targets/f7/furi_hal/furi_hal_idle_timer.h,,
+Header,+,targets/f7/furi_hal/furi_hal_ina219.h,,
 Header,+,targets/f7/furi_hal/furi_hal_interrupt.h,,
 Header,+,targets/f7/furi_hal/furi_hal_os.h,,
 Header,+,targets/f7/furi_hal/furi_hal_pwm.h,,
@@ -1524,6 +1525,9 @@ Function,-,furi_hal_ibutton_init,void,
 Function,+,furi_hal_ibutton_pin_configure,void,
 Function,+,furi_hal_ibutton_pin_reset,void,
 Function,+,furi_hal_ibutton_pin_write,void,const _Bool
+Function,+,furi_hal_ina219_get_voltage_current,_Bool,"float*, float*"
+Function,+,furi_hal_ina219_init,_Bool,
+Function,+,furi_hal_ina219_is_ready,_Bool,
 Function,+,furi_hal_info_get,void,"PropertyValueCallback, char, void*"
 Function,+,furi_hal_info_get_api_version,void,"uint16_t*, uint16_t*"
 Function,+,furi_hal_infrared_async_rx_set_capture_isr_callback,void,"FuriHalInfraredRxCaptureCallback, void*"
@@ -4407,6 +4411,8 @@ Variable,+,gpio_ext_pb3,const GpioPin,
 Variable,+,gpio_ext_pc0,const GpioPin,
 Variable,+,gpio_ext_pc1,const GpioPin,
 Variable,+,gpio_ext_pc3,const GpioPin,
+Variable,+,gpio_i2c_power_scl,const GpioPin,
+Variable,+,gpio_i2c_power_sda,const GpioPin,
 Variable,+,gpio_ibutton,const GpioPin,
 Variable,+,gpio_infrared_rx,const GpioPin,
 Variable,+,gpio_infrared_tx,const GpioPin,

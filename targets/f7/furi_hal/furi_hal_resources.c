@@ -9,7 +9,7 @@
 
 const GpioPin gpio_button_IRQ = {.port = GPIOA, .pin = LL_GPIO_PIN_9};
 
-const GpioPin gpio_spi_miso_BTN = {.port = GPIOA, .pin = LL_GPIO_PIN_6};
+const GpioPin gpio_spi_miso_BTN = {.port = GPIOC, .pin = LL_GPIO_PIN_6};
 const GpioPin gpio_button_sr_latch = {.port = GPIOH, .pin = LL_GPIO_PIN_3};
 
 
@@ -64,8 +64,8 @@ const GpioPin gpio_infrared_tx = {.port = IR_TX_GPIO_Port, .pin = IR_TX_Pin};
 const GpioPin gpio_usart_tx = {.port = USART1_TX_Port, .pin = USART1_TX_Pin};
 const GpioPin gpio_usart_rx = {.port = USART1_RX_Port, .pin = USART1_RX_Pin};
 
-//const GpioPin gpio_i2c_power_sda = {.port = GPIOC, .pin = LL_GPIO_PIN_10};
-//const GpioPin gpio_i2c_power_scl = {.port = GPIOC, .pin = LL_GPIO_PIN_9};
+const GpioPin gpio_i2c_power_sda = {.port = GPIOB, .pin = LL_GPIO_PIN_9};
+const GpioPin gpio_i2c_power_scl = {.port = GPIOB, .pin = LL_GPIO_PIN_8};
 
 const GpioPin gpio_speaker = {.port = GPIOC, .pin = LL_GPIO_PIN_8};
 
@@ -210,7 +210,7 @@ void furi_hal_resources_init_early(void) {
 
     // Explicit, surviving reset, pulls
     LL_PWR_EnablePUPDCfg();
-    LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_A, LL_PWR_GPIO_BIT_6); // gpio
+  //  LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_A, LL_PWR_GPIO_BIT_6); // gpio
   //  LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_8); // gpio_speaker
     LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_9); // gpio_infrared_tx
     
@@ -220,12 +220,12 @@ void furi_hal_resources_init_early(void) {
     //furi_hal_gpio_init(&gpio_periph_power, GpioModeOutputOpenDrain, GpioPullNo, GpioSpeedLow);
 
     // Display pins
-    furi_hal_gpio_write(&gpio_display_rst_n, 0);
-    furi_hal_gpio_init_simple(&gpio_display_rst_n, GpioModeOutputPushPull);
-    LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_0); // gpio_display_rst_n
-    furi_hal_gpio_write(&gpio_display_di, 0);
-    furi_hal_gpio_init_simple(&gpio_display_di, GpioModeOutputPushPull);
-    LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_1); // gpio_display_di
+    //furi_hal_gpio_write(&gpio_display_rst_n, 0);
+    //furi_hal_gpio_init_simple(&gpio_display_rst_n, GpioModeOutputPushPull);
+    //LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_0); // gpio_display_rst_n
+    //furi_hal_gpio_write(&gpio_display_di, 0);
+    //furi_hal_gpio_init_simple(&gpio_display_di, GpioModeOutputPushPull);
+    //LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_1); // gpio_display_di
 
     // Hard reset USB
     furi_hal_gpio_write(&gpio_usb_dm, 1);

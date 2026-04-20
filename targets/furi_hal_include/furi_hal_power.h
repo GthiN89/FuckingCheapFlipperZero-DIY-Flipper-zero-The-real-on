@@ -2,6 +2,7 @@
  * @file furi_hal_power.h
  * Power HAL API
  */
+#define USE_INA219
 
 #pragma once
 
