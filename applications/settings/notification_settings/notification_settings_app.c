@@ -60,16 +60,6 @@ const int32_t contrast_value[CONTRAST_COUNT] = {
     8,
 };
 
-#define BACKLIGHT_COUNT 21
-const char* const backlight_text[BACKLIGHT_COUNT] = {
-    "0%",  "5%",  "10%", "15%", "20%", "25%", "30%", "35%", "40%", "45%",  "50%",
-    "55%", "60%", "65%", "70%", "75%", "80%", "85%", "90%", "95%", "100%",
-};
-const float backlight_value[BACKLIGHT_COUNT] = {
-    0.00f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f, 0.50f,
-    0.55f, 0.60f, 0.65f, 0.70f, 0.75f, 0.80f, 0.85f, 0.90f, 0.95f, 1.00f,
-};
-
 #define VOLUME_COUNT 21
 const char* const volume_text[VOLUME_COUNT] = {
     "0%",  "5%",  "10%", "15%", "20%", "25%", "30%", "35%", "40%", "45%",  "50%",
@@ -79,24 +69,6 @@ const float volume_value[VOLUME_COUNT] = {
     0.00f, 0.05f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f, 0.50f,
     0.55f, 0.60f, 0.65f, 0.70f, 0.75f, 0.80f, 0.85f, 0.90f, 0.95f, 1.00f,
 };
-
-#define DELAY_COUNT 12
-const char* const delay_text[DELAY_COUNT] = {
-    "Always ON",
-    "1s",
-    "5s",
-    "10s",
-    "15s",
-    "30s",
-    "60s",
-    "90s",
-    "120s",
-    "5min",
-    "10min",
-    "30min",
-};
-const uint32_t delay_value[DELAY_COUNT] =
-    {0, 1000, 5000, 10000, 15000, 30000, 60000, 90000, 120000, 300000, 600000, 1800000};
 
 #define VIBRO_COUNT 2
 const char* const vibro_text[VIBRO_COUNT] = {
@@ -111,25 +83,8 @@ static void contrast_changed(VariableItem* item) {
 
     variable_item_set_current_value_text(item, contrast_text[index]);
     app->notification->settings.contrast = contrast_value[index];
+    // FURI_LOG_D("NotificationSettings", "Contrast changed: %d", contrast_value[index]);
     notification_message(app->notification, &sequence_lcd_contrast_update);
-}
-
-static void backlight_changed(VariableItem* item) {
-    NotificationAppSettings* app = variable_item_get_context(item);
-    uint8_t index = variable_item_get_current_value_index(item);
-
-    variable_item_set_current_value_text(item, backlight_text[index]);
-    app->notification->settings.display_brightness = backlight_value[index];
-    notification_message(app->notification, &sequence_display_backlight_on);
-}
-
-static void screen_changed(VariableItem* item) {
-    NotificationAppSettings* app = variable_item_get_context(item);
-    uint8_t index = variable_item_get_current_value_index(item);
-
-    variable_item_set_current_value_text(item, delay_text[index]);
-    app->notification->settings.display_off_delay_ms = delay_value[index];
-    notification_message(app->notification, &sequence_display_backlight_on);
 }
 
 const NotificationMessage apply_message = {
@@ -139,17 +94,6 @@ const NotificationSequence apply_sequence = {
     &apply_message,
     NULL,
 };
-
-static void led_changed(VariableItem* item) {
-    NotificationAppSettings* app = variable_item_get_context(item);
-    uint8_t index = variable_item_get_current_value_index(item);
-
-    variable_item_set_current_value_text(item, backlight_text[index]);
-    app->notification->settings.led_brightness = backlight_value[index];
-    notification_message(app->notification, &apply_sequence);
-    notification_internal_message(app->notification, &apply_sequence);
-    notification_message(app->notification, &sequence_blink_white_100);
-}
 
 static void volume_changed(VariableItem* item) {
     NotificationAppSettings* app = variable_item_get_context(item);
@@ -187,32 +131,32 @@ static NotificationAppSettings* alloc_settings(void) {
     uint8_t value_index;
 
     item = variable_item_list_add(
-        app->variable_item_list, "LCD Contrast", CONTRAST_COUNT, contrast_changed, app);
+        app->variable_item_list, "OLED Contrast", CONTRAST_COUNT, contrast_changed, app);
     value_index =
         value_index_int32(app->notification->settings.contrast, contrast_value, CONTRAST_COUNT);
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, contrast_text[value_index]);
 
-    item = variable_item_list_add(
-        app->variable_item_list, "LCD Backlight", BACKLIGHT_COUNT, backlight_changed, app);
-    value_index = value_index_float(
-        app->notification->settings.display_brightness, backlight_value, BACKLIGHT_COUNT);
-    variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, backlight_text[value_index]);
+    // item = variable_item_list_add(
+    //     app->variable_item_list, "LCD Backlight", BACKLIGHT_COUNT, backlight_changed, app);
+    // value_index = value_index_float(
+    //     app->notification->settings.display_brightness, backlight_value, BACKLIGHT_COUNT);
+    // variable_item_set_current_value_index(item, value_index);
+    // variable_item_set_current_value_text(item, backlight_text[value_index]);
 
-    item = variable_item_list_add(
-        app->variable_item_list, "Backlight Time", DELAY_COUNT, screen_changed, app);
-    value_index = value_index_uint32(
-        app->notification->settings.display_off_delay_ms, delay_value, DELAY_COUNT);
-    variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, delay_text[value_index]);
+    // item = variable_item_list_add(
+    //     app->variable_item_list, "Backlight Time", DELAY_COUNT, screen_changed, app);
+    // value_index = value_index_uint32(
+    //     app->notification->settings.display_off_delay_ms, delay_value, DELAY_COUNT);
+    // variable_item_set_current_value_index(item, value_index);
+    // variable_item_set_current_value_text(item, delay_text[value_index]);
 
-    item = variable_item_list_add(
-        app->variable_item_list, "LED Brightness", BACKLIGHT_COUNT, led_changed, app);
-    value_index = value_index_float(
-        app->notification->settings.led_brightness, backlight_value, BACKLIGHT_COUNT);
-    variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, backlight_text[value_index]);
+    // item = variable_item_list_add(
+    //     app->variable_item_list, "LED Brightness", BACKLIGHT_COUNT, led_changed, app);
+    // value_index = value_index_float(
+    //     app->notification->settings.led_brightness, backlight_value, BACKLIGHT_COUNT);
+    // variable_item_set_current_value_index(item, value_index);
+    // variable_item_set_current_value_text(item, backlight_text[value_index]);
 
     if(furi_hal_rtc_is_flag_set(FuriHalRtcFlagStealthMode)) {
         item = variable_item_list_add(app->variable_item_list, "Volume", 1, NULL, app);

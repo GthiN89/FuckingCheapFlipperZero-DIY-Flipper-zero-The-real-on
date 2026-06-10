@@ -33,10 +33,7 @@ static const FuriHalI2cBusHandle* mcp_i2c_handle = &furi_hal_i2c_handle_power;
 static GpioExtiCallback exti_cb = NULL;
 static void* exti_ctx = NULL;
 
-static bool mcp_write_reg(uint8_t reg, uint8_t val);
-static bool mcp_read_reg(uint8_t reg, uint8_t* val);
-static bool mcp_write_reg_locked(uint8_t reg, uint8_t val);
-static bool mcp_write_reg_locked_addr(uint8_t addr, uint8_t reg, uint8_t val);
+
 
 // Set which I2C bus to use (power or external). Call this before init().
 void furi_hal_mcp23017_set_i2c_bus(const FuriHalI2cBusHandle* bus_handle) {
@@ -110,7 +107,7 @@ bool furi_hal_mcp23017_init(void) {
     return furi_hal_mcp23017_init_ex(mcp_addr);
 }
 
-static bool mcp_write_reg(uint8_t reg, uint8_t val) {
+ bool mcp_write_reg(uint8_t reg, uint8_t val) {
     bool ret = false;
     furi_hal_i2c_acquire(mcp_i2c_handle);
     if(mcp_use_8bit_addr) {
@@ -123,7 +120,7 @@ static bool mcp_write_reg(uint8_t reg, uint8_t val) {
     return ret;
 }
 
-static bool mcp_read_reg(uint8_t reg, uint8_t* val) {
+ bool mcp_read_reg(uint8_t reg, uint8_t* val) {
     bool ret = false;
     furi_hal_i2c_acquire(mcp_i2c_handle);
     if(mcp_use_8bit_addr) {
@@ -136,7 +133,7 @@ static bool mcp_read_reg(uint8_t reg, uint8_t* val) {
     return ret;
 }
 
-static bool mcp_write_reg_locked(uint8_t reg, uint8_t val) {
+ bool mcp_write_reg_locked(uint8_t reg, uint8_t val) {
     // Caller must hold the I2C bus
     if(mcp_use_8bit_addr) {
         uint8_t addr8 = (uint8_t)(mcp_addr << 1);
@@ -145,7 +142,7 @@ static bool mcp_write_reg_locked(uint8_t reg, uint8_t val) {
     return furi_hal_i2c_write_reg_8(mcp_i2c_handle, mcp_addr, reg, val, 200);
 }
 
-static bool mcp_write_reg_locked_addr(uint8_t addr, uint8_t reg, uint8_t val) {
+ bool mcp_write_reg_locked_addr(uint8_t addr, uint8_t reg, uint8_t val) {
     return furi_hal_i2c_write_reg_8(mcp_i2c_handle, addr, reg, val, 200);
 }
 
@@ -275,16 +272,18 @@ bool furi_hal_mcp23017_set_pin_direction(uint8_t pin, bool is_input) {
 // LED control functions - RGB LEDs on MCP23017 port B (B1=RED, B2=GREEN, B3=BLUE)
 // Initialize RGB LED pins as outputs and turn them off
 bool furi_hal_mcp23017_led_init(void) {
+    furi_hal_mcp23017_init_ex(mcp_addr);
+    furi_delay_ms(100);
     // Configure B1, B2, B3 as outputs (0 = output)
     // B1 = pin 9, B2 = pin 10, B3 = pin 11
-    if(!furi_hal_mcp23017_set_pin_direction(9, false)) return false;
-    if(!furi_hal_mcp23017_set_pin_direction(10, false)) return false;
-    if(!furi_hal_mcp23017_set_pin_direction(11, false)) return false;
+    if(!furi_hal_mcp23017_set_pin_direction(13, false)) { FURI_LOG_I(TAG, "RGB LED init error"); return false;}
+    if(!furi_hal_mcp23017_set_pin_direction(14, false)) { FURI_LOG_I(TAG, "RGB LED init error"); return false;}
+    if(!furi_hal_mcp23017_set_pin_direction(15, false)) { FURI_LOG_I(TAG, "RGB LED init error"); return false;}
     
     // Turn all LEDs off
-    if(!furi_hal_mcp23017_write_pin(9, false)) return false;
-    if(!furi_hal_mcp23017_write_pin(10, false)) return false;
-    if(!furi_hal_mcp23017_write_pin(11, false)) return false;
+    if(!furi_hal_mcp23017_write_pin(13, false)) { FURI_LOG_I(TAG, "RGB LED init error"); return false;}
+    if(!furi_hal_mcp23017_write_pin(14, false)) { FURI_LOG_I(TAG, "RGB LED init error"); return false;}
+    if(!furi_hal_mcp23017_write_pin(15, false)) { FURI_LOG_I(TAG, "RGB LED init error"); return false;}
     
     FURI_LOG_I(TAG, "RGB LED initialized on MCP23017");
     return true;
@@ -292,15 +291,15 @@ bool furi_hal_mcp23017_led_init(void) {
 
 // Set individual LED colors (on/off only, no PWM)
 bool furi_hal_mcp23017_led_set_red(bool on) {
-    return furi_hal_mcp23017_write_pin(9, on);
+    return furi_hal_mcp23017_write_pin(13, on);
 }
 
 bool furi_hal_mcp23017_led_set_green(bool on) {
-    return furi_hal_mcp23017_write_pin(10, on);
+    return furi_hal_mcp23017_write_pin(14, on);
 }
 
 bool furi_hal_mcp23017_led_set_blue(bool on) {
-    return furi_hal_mcp23017_write_pin(11, on);
+    return furi_hal_mcp23017_write_pin(15, on);
 }
 
 // Set all three LED colors at once

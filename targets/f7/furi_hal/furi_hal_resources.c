@@ -7,10 +7,10 @@
 
 #define TAG "FuriHalResources"
 
-const GpioPin gpio_button_IRQ = {.port = GPIOA, .pin = LL_GPIO_PIN_9};
+//const GpioPin gpio_button_IRQ = {.port = GPIOA, .pin = LL_GPIO_PIN_9};
 
-const GpioPin gpio_spi_miso_BTN = {.port = GPIOC, .pin = LL_GPIO_PIN_6};
-const GpioPin gpio_button_sr_latch = {.port = GPIOH, .pin = LL_GPIO_PIN_3};
+//const GpioPin gpio_spi_miso_BTN = {.port = GPIOA, .pin = LL_GPIO_PIN_6};
+//const GpioPin gpio_button_sr_latch = {.port = GPIOH, .pin = LL_GPIO_PIN_3};
 
 
 const GpioPin gpio_swdio = {.port = GPIOA, .pin = LL_GPIO_PIN_13};
@@ -23,9 +23,7 @@ const GpioPin gpio_cc1101_g0 = {.port = CC1101_G0_GPIO_Port, .pin = CC1101_G0_Pi
 //const GpioPin gpio_rf_sw_0 = {.port = RF_SW_0_GPIO_Port, .pin = RF_SW_0_Pin};
 
 const GpioPin gpio_subghz_cs = {.port = CC1101_CS_GPIO_Port, .pin = CC1101_CS_Pin};
-const GpioPin gpio_display_cs = {.port = DISPLAY_CS_GPIO_Port, .pin = DISPLAY_CS_Pin};
-const GpioPin gpio_display_rst_n = {.port = DISPLAY_RST_GPIO_Port, .pin = DISPLAY_RST_Pin};
-const GpioPin gpio_display_di = {.port = DISPLAY_DI_GPIO_Port, .pin = DISPLAY_DI_Pin};
+
 const GpioPin gpio_sdcard_cs = {.port = SD_CS_GPIO_Port, .pin = SD_CS_Pin};
 //const GpioPin gpio_sdcard_cd = {.port = SD_CD_GPIO_Port, .pin = SD_CD_Pin};
 const GpioPin gpio_nfc_cs = {.port = NFC_CS_GPIO_Port, .pin = NFC_CS_Pin};
@@ -41,7 +39,7 @@ const GpioPin gpio_button_back2 = {.port = GPIOC, .pin = LL_GPIO_PIN_13};
 
 const GpioPin gpio_spi_miso = {.port = SPI_MISO_GPIO_Port, .pin = SPI_MISO_Pin};
 const GpioPin gpio_spi_mosi = {.port = SPI_MOSI_GPIO_Port, .pin = SPI_MOSI_Pin};
-const GpioPin gpio_spi_mosi1 = {.port = SPI_MOSI_GPIO_Port1, .pin = SPI_MOSI_Pin1};
+// const GpioPin gpio_spi_mosi1 = {.port = SPI_MOSI_GPIO_Port1, .pin = SPI_MOSI_Pin1};
 const GpioPin gpio_spi_sck = {.port = SPI_SCK_GPIO_Port, .pin = SPI_SCK_Pin};
 
 const GpioPin gpio_ext_pc0 = {.port = PC0_GPIO_Port, .pin = PC0_Pin};
@@ -64,8 +62,16 @@ const GpioPin gpio_infrared_tx = {.port = IR_TX_GPIO_Port, .pin = IR_TX_Pin};
 const GpioPin gpio_usart_tx = {.port = USART1_TX_Port, .pin = USART1_TX_Pin};
 const GpioPin gpio_usart_rx = {.port = USART1_RX_Port, .pin = USART1_RX_Pin};
 
-const GpioPin gpio_i2c_power_sda = {.port = GPIOB, .pin = LL_GPIO_PIN_9};
-const GpioPin gpio_i2c_power_scl = {.port = GPIOB, .pin = LL_GPIO_PIN_8};
+const GpioPin gpio_i2c_1_scl = {.port = GPIOA, .pin = LL_GPIO_PIN_10};
+const GpioPin gpio_i2c_1_sda = {.port = GPIOA, .pin = LL_GPIO_PIN_9};
+
+
+const GpioPin gpio_i2c_3_sda = {.port = I2C_3_SDA_GPIO_Port, .pin = I2C_3_SDA_Pin};
+const GpioPin gpio_i2c_3_scl = {.port = I2C_3_SCL_GPIO_Port, .pin = I2C_3_SCL_Pin};
+
+
+const GpioPin gpio_mcp_int = {.port = GPIOA, .pin = LL_GPIO_PIN_3};
+
 
 const GpioPin gpio_speaker = {.port = GPIOC, .pin = LL_GPIO_PIN_8};
 
@@ -210,7 +216,7 @@ void furi_hal_resources_init_early(void) {
 
     // Explicit, surviving reset, pulls
     LL_PWR_EnablePUPDCfg();
-  //  LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_A, LL_PWR_GPIO_BIT_6); // gpio
+   // LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_A, LL_PWR_GPIO_BIT_6); // gpio
   //  LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_8); // gpio_speaker
     LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_9); // gpio_infrared_tx
     
@@ -220,12 +226,6 @@ void furi_hal_resources_init_early(void) {
     //furi_hal_gpio_init(&gpio_periph_power, GpioModeOutputOpenDrain, GpioPullNo, GpioSpeedLow);
 
     // Display pins
-    //furi_hal_gpio_write(&gpio_display_rst_n, 0);
-    //furi_hal_gpio_init_simple(&gpio_display_rst_n, GpioModeOutputPushPull);
-    //LL_PWR_EnableGPIOPullUp(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_0); // gpio_display_rst_n
-    //furi_hal_gpio_write(&gpio_display_di, 0);
-    //furi_hal_gpio_init_simple(&gpio_display_di, GpioModeOutputPushPull);
-    //LL_PWR_EnableGPIOPullDown(LL_PWR_GPIO_B, LL_PWR_GPIO_BIT_1); // gpio_display_di
 
     // Hard reset USB
     furi_hal_gpio_write(&gpio_usb_dm, 1);
@@ -247,7 +247,7 @@ void furi_hal_resources_init_early(void) {
 }
 
 void furi_hal_resources_deinit_early(void) {
-    //furi_hal_resources_init_input_pins(GpioModeAnalog);
+   // furi_hal_resources_init_input_pins(GpioModeAnalog);
     furi_hal_bus_disable(FuriHalBusGPIOA);
     furi_hal_bus_disable(FuriHalBusGPIOB);
     furi_hal_bus_disable(FuriHalBusGPIOC);
@@ -258,13 +258,13 @@ void furi_hal_resources_deinit_early(void) {
 
 void furi_hal_resources_init(void) {
     // Button pins
- //   furi_hal_resources_init_input_pins(GpioModeInterruptRiseFall);
+    //furi_hal_resources_init_input_pins(GpioModeInterruptRiseFall);
 
     // SD pins
  //   furi_hal_gpio_init(&gpio_sdcard_cd, GpioModeInput, GpioPullNo, GpioSpeedLow);
   //  furi_hal_gpio_write(&gpio_sdcard_cd, 0);
 
-    furi_hal_gpio_init(&gpio_ibutton, GpioModeAnalog, GpioPullNo, GpioSpeedLow);
+  //  furi_hal_gpio_init(&gpio_ibutton, GpioModeAnalog, GpioPullNo, GpioSpeedLow);
 
     furi_hal_gpio_init(&gpio_nfc_irq_rfid_pull, GpioModeInterruptRiseFall, GpioPullUp, GpioSpeedLow);
     FURI_LOG_T(TAG, "IRQ4");

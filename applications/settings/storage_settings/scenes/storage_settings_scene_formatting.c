@@ -16,11 +16,11 @@ static const NotificationSequence sequence_set_formatting_leds = {
     NULL,
 };
 
-static const NotificationSequence sequence_reset_formatting_leds = {
-    &message_red_0,
-    &message_green_0,
-    NULL,
-};
+// static const NotificationSequence sequence_reset_formatting_leds = {
+//     &message_red_0,
+//     &message_green_0,
+//     NULL,
+// };
 
 static void
     storage_settings_scene_formatting_dialog_callback(DialogExResult result, void* context) {
@@ -40,7 +40,7 @@ void storage_settings_scene_formatting_on_enter(void* context) {
 
     notification_message_block(app->notification, &sequence_set_formatting_leds);
     error = storage_sd_format(app->fs_api);
-    notification_message(app->notification, &sequence_reset_formatting_leds);
+    //notification_message(app->notification, &sequence_reset_formatting_leds);
     notification_message(app->notification, &sequence_blink_green_100);
 
     dialog_ex_set_context(dialog_ex, app);
@@ -90,8 +90,8 @@ void storage_settings_scene_formatting_on_exit(void* context) {
     StorageSettings* app = context;
     DialogEx* dialog_ex = app->dialog_ex;
 
-    NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
-    notification_message(notification, &sequence_reset_green);
+   // NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
+    //notification_message(notification, &sequence_reset_green);
     furi_record_close(RECORD_NOTIFICATION);
 
     dialog_ex_reset(dialog_ex);

@@ -4,7 +4,7 @@ import os
 
 # For more details on these options, run 'fbt -h'
 
-FIRMWARE_ORIGIN = "Momentum"
+FIRMWARE_ORIGIN = "FCFZ Momentum"
 
 # Default hardware target
 TARGET_HW = 7
@@ -102,23 +102,23 @@ FIRMWARE_APPS = {
     ],
     "unit_tests": [
         # Svc
-        "basic_services",
+        #"basic_services",
         # Apps
-        "main_apps",
+      # # "main_apps",
         "system_apps",
         # Settings
-        "settings_apps",
+       # "settings_apps",
         # Tests
-        "unit_tests",
+      #  "unit_tests",
     ],
     "unit_tests_min": [
-        "basic_services",
-        "updater_app",
-        "radio_device_cc1101_ext",
-        "unit_tests",
-        "js_app",
-        "infrared",
-        "archive",
+    #    "basic_services",
+     #   "updater_app",
+      #  "radio_device_cc1101_ext",
+    #    "unit_tests",
+     #   "js_app",
+    #    "infrared",
+    #    "archive",
     ],
 }
 

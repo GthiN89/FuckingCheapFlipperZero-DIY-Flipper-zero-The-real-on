@@ -31,19 +31,19 @@ uint8_t u8g2_gpio_and_delay_stm32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, vo
     case U8X8_MSG_GPIO_I2C_CLOCK:
         // Software I2C - control SCL pin (PA9)
         if(arg_int) {
-            furi_hal_gpio_init_simple(&gpio_i2c_power_scl, GpioModeInput);
+            furi_hal_gpio_init_simple(&gpio_i2c_1_scl, GpioModeInput);
         } else {
-            furi_hal_gpio_init_simple(&gpio_i2c_power_scl, GpioModeOutputOpenDrain);
-            furi_hal_gpio_write(&gpio_i2c_power_scl, false);
+            furi_hal_gpio_init_simple(&gpio_i2c_1_scl, GpioModeOutputOpenDrain);
+            furi_hal_gpio_write(&gpio_i2c_1_scl, false);
         }
         break;
     case U8X8_MSG_GPIO_I2C_DATA:
         // Software I2C - control SDA pin (PB9)
         if(arg_int) {
-            furi_hal_gpio_init_simple(&gpio_i2c_power_sda, GpioModeInput);
+            furi_hal_gpio_init_simple(&gpio_i2c_1_sda, GpioModeInput);
         } else {
-            furi_hal_gpio_init_simple(&gpio_i2c_power_sda, GpioModeOutputOpenDrain);
-            furi_hal_gpio_write(&gpio_i2c_power_sda, false);
+            furi_hal_gpio_init_simple(&gpio_i2c_1_sda, GpioModeOutputOpenDrain);
+            furi_hal_gpio_write(&gpio_i2c_1_sda, false);
         }
         break;
     default:
@@ -55,21 +55,23 @@ uint8_t u8g2_gpio_and_delay_stm32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, vo
 
 uint8_t u8x8_hw_spi_stm32(u8x8_t* u8x8, uint8_t msg, uint8_t arg_int, void* arg_ptr) {
     UNUSED(u8x8);
+     UNUSED(arg_int);
+    UNUSED(arg_ptr);
     switch(msg) {
-    case U8X8_MSG_BYTE_SEND:
-        furi_hal_spi_bus_tx(&furi_hal_spi_bus_handle_display, (uint8_t*)arg_ptr, arg_int, 10000);
-        break;
-    case U8X8_MSG_BYTE_SET_DC:
-        furi_hal_gpio_write(&gpio_display_di, arg_int);
-        break;
-    case U8X8_MSG_BYTE_INIT:
-        break;
-    case U8X8_MSG_BYTE_START_TRANSFER:
-        furi_hal_spi_acquire(&furi_hal_spi_bus_handle_display);
-        break;
-    case U8X8_MSG_BYTE_END_TRANSFER:
-        furi_hal_spi_release(&furi_hal_spi_bus_handle_display);
-        break;
+  //  case U8X8_MSG_BYTE_SEND:
+  //      furi_hal_spi_bus_tx(&furi_hal_spi_bus_handle_display, (uint8_t*)arg_ptr, arg_int, 10000);
+  //      break;
+   // case U8X8_MSG_BYTE_SET_DC:
+      //  furi_hal_gpio_write(&gpio_display_di, arg_int);
+     //   break;
+   case U8X8_MSG_BYTE_INIT:
+       break;
+  // case U8X8_MSG_BYTE_START_TRANSFER:
+  //   //  furi_hal_spi_acquire(&furi_hal_spi_bus_handle_display);
+  //  //  break;
+  // case U8X8_MSG_BYTE_END_TRANSFER:
+  //  //   furi_hal_spi_release(&furi_hal_spi_bus_handle_display);
+  //     break;
     default:
         return 0;
     }

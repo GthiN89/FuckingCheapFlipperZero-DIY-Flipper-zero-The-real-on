@@ -42,15 +42,15 @@ void flipper_boot_recovery_exec(void) {
 
     size_t counter = COUNTER_VALUE;
     while(counter) {
-        if(!furi_hal_gpio_read(&gpio_button_down)) {
-            break;
-        }
+      //  if(!furi_hal_gpio_read(&gpio_button_down)) {
+     //       break;
+     //   }
 
-        if(!furi_hal_gpio_read(&gpio_button_right)) {
-            counter--;
-        } else {
-            counter = COUNTER_VALUE;
-        }
+     //   if(!furi_hal_gpio_read(&gpio_button_right)) {
+     //       counter--;
+     //   } else {
+    //        counter = COUNTER_VALUE;
+    //    }
 
         flipper_boot_recovery_draw_progress(canvas, counter);
     }

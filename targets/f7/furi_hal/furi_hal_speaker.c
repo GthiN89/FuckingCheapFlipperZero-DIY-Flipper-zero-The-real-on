@@ -36,8 +36,8 @@ bool furi_hal_speaker_acquire(uint32_t timeout) {
     if(furi_mutex_acquire(furi_hal_speaker_mutex, timeout) == FuriStatusOk) {
         furi_hal_power_insomnia_enter();
         furi_hal_bus_enable(FuriHalBusTIM16);
-        furi_hal_gpio_init_ex(
-            &gpio_speaker, GpioModeAltFunctionPushPull, GpioPullNo, GpioSpeedLow, GpioAltFn14TIM16);
+        // furi_hal_gpio_init_ex(
+        //     &gpio_speaker, GpioModeAltFunctionPushPull, GpioPullNo, GpioSpeedLow, GpioAltFn14TIM16);
         return true;
     } else {
         return false;
@@ -49,7 +49,7 @@ void furi_hal_speaker_release(void) {
     furi_check(furi_hal_speaker_is_mine());
 
     furi_hal_speaker_stop();
-    furi_hal_gpio_init(&gpio_speaker, GpioModeAnalog, GpioPullDown, GpioSpeedLow);
+    //furi_hal_gpio_init(&gpio_speaker, GpioModeAnalog, GpioPullDown, GpioSpeedLow);
 
     furi_hal_bus_disable(FuriHalBusTIM16);
     furi_hal_power_insomnia_exit();

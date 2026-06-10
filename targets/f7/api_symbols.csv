@@ -1,5 +1,5 @@
 entry,status,name,type,params
-Version,+,87.2,,
+Version,+,87.4,,
 Header,+,applications/drivers/subghz/cc1101_ext/cc1101_ext_interconnect.h,,
 Header,+,applications/main/archive/helpers/archive_helpers_ext.h,,
 Header,+,applications/main/subghz/subghz_fap.h,,
@@ -297,6 +297,7 @@ Header,+,targets/f7/furi_hal/furi_hal_ibutton.h,,
 Header,+,targets/f7/furi_hal/furi_hal_idle_timer.h,,
 Header,+,targets/f7/furi_hal/furi_hal_ina219.h,,
 Header,+,targets/f7/furi_hal/furi_hal_interrupt.h,,
+Header,+,targets/f7/furi_hal/furi_hal_mcp23017.h,,
 Header,+,targets/f7/furi_hal/furi_hal_os.h,,
 Header,+,targets/f7/furi_hal/furi_hal_pwm.h,,
 Header,+,targets/f7/furi_hal/furi_hal_resources.h,,
@@ -1557,6 +1558,23 @@ Function,+,furi_hal_light_blink_stop,void,
 Function,-,furi_hal_light_init,void,
 Function,+,furi_hal_light_sequence,void,const char*
 Function,+,furi_hal_light_set,void,"Light, uint8_t"
+Function,+,furi_hal_mcp23017_attach_int,void,"GpioExtiCallback, void*"
+Function,+,furi_hal_mcp23017_configure_interrupts,_Bool,uint16_t
+Function,+,furi_hal_mcp23017_handle_int,void,
+Function,+,furi_hal_mcp23017_init,_Bool,
+Function,+,furi_hal_mcp23017_init_ex,_Bool,uint8_t
+Function,+,furi_hal_mcp23017_led_init,_Bool,
+Function,+,furi_hal_mcp23017_led_off,_Bool,
+Function,+,furi_hal_mcp23017_led_set,_Bool,"uint8_t, uint8_t, uint8_t"
+Function,+,furi_hal_mcp23017_led_set_blue,_Bool,_Bool
+Function,+,furi_hal_mcp23017_led_set_color,_Bool,"_Bool, _Bool, _Bool"
+Function,+,furi_hal_mcp23017_led_set_green,_Bool,_Bool
+Function,+,furi_hal_mcp23017_led_set_red,_Bool,_Bool
+Function,+,furi_hal_mcp23017_read_gpio,_Bool,uint16_t*
+Function,+,furi_hal_mcp23017_set_i2c_bus,void,const FuriHalI2cBusHandle*
+Function,+,furi_hal_mcp23017_set_pin_direction,_Bool,"uint8_t, _Bool"
+Function,+,furi_hal_mcp23017_write_gpio,_Bool,uint16_t
+Function,+,furi_hal_mcp23017_write_pin,_Bool,"uint8_t, _Bool"
 Function,+,furi_hal_memory_alloc,void*,size_t
 Function,+,furi_hal_memory_get_free,size_t,
 Function,+,furi_hal_memory_init,void,
@@ -2690,6 +2708,10 @@ Function,-,mbedtls_sha256_update,int,"mbedtls_sha256_context*, const unsigned ch
 Function,-,mblen,int,"const char*, size_t"
 Function,-,mbstowcs,size_t,"wchar_t*, const char*, size_t"
 Function,-,mbtowc,int,"wchar_t*, const char*, size_t"
+Function,+,mcp_read_reg,_Bool,"uint8_t, uint8_t*"
+Function,+,mcp_write_reg,_Bool,"uint8_t, uint8_t"
+Function,+,mcp_write_reg_locked,_Bool,"uint8_t, uint8_t"
+Function,+,mcp_write_reg_locked_addr,_Bool,"uint8_t, uint8_t, uint8_t"
 Function,+,md5_calc_file,_Bool,"File*, const char*, unsigned char[16], FS_Error*"
 Function,+,md5_string_calc_file,_Bool,"File*, const char*, FuriString*, FS_Error*"
 Function,-,memccpy,void*,"void*, const void*, int, size_t"
@@ -4379,8 +4401,6 @@ Variable,+,furi_hal_i2c_bus_power,FuriHalI2cBus,
 Variable,+,furi_hal_i2c_handle_external,const FuriHalI2cBusHandle,
 Variable,+,furi_hal_i2c_handle_power,const FuriHalI2cBusHandle,
 Variable,+,furi_hal_spi_bus,FuriHalSpiBus,
-Variable,+,furi_hal_spi_bus_handle_button_sr,const FuriHalSpiBusHandle,
-Variable,+,furi_hal_spi_bus_handle_display,const FuriHalSpiBusHandle,
 Variable,+,furi_hal_spi_bus_handle_external,const FuriHalSpiBusHandle,
 Variable,+,furi_hal_spi_bus_handle_external_extra,const FuriHalSpiBusHandle,
 Variable,+,furi_hal_spi_bus_handle_nfc,const FuriHalSpiBusHandle,
@@ -4391,18 +4411,14 @@ Variable,+,furi_hal_spi_preset_1edge_low_16m,const LL_SPI_InitTypeDef,
 Variable,+,furi_hal_spi_preset_1edge_low_2m,const LL_SPI_InitTypeDef,
 Variable,+,furi_hal_spi_preset_1edge_low_8m,const LL_SPI_InitTypeDef,
 Variable,+,furi_hal_spi_preset_1edge_low_8m_NFC,const LL_SPI_InitTypeDef,
-Variable,+,gpio_button_IRQ,const GpioPin,
 Variable,+,gpio_button_back,const GpioPin,
 Variable,+,gpio_button_down,const GpioPin,
 Variable,+,gpio_button_left,const GpioPin,
 Variable,+,gpio_button_ok,const GpioPin,
 Variable,+,gpio_button_right,const GpioPin,
-Variable,+,gpio_button_sr_latch,const GpioPin,
 Variable,+,gpio_button_up,const GpioPin,
 Variable,+,gpio_cc1101_g0,const GpioPin,
-Variable,+,gpio_display_cs,const GpioPin,
-Variable,+,gpio_display_di,const GpioPin,
-Variable,+,gpio_display_rst_n,const GpioPin,
+Variable,-,gpio_display_cs,const GpioPin,
 Variable,+,gpio_ext_pa4,const GpioPin,
 Variable,+,gpio_ext_pa6,const GpioPin,
 Variable,+,gpio_ext_pa7,const GpioPin,
@@ -4411,11 +4427,14 @@ Variable,+,gpio_ext_pb3,const GpioPin,
 Variable,+,gpio_ext_pc0,const GpioPin,
 Variable,+,gpio_ext_pc1,const GpioPin,
 Variable,+,gpio_ext_pc3,const GpioPin,
-Variable,+,gpio_i2c_power_scl,const GpioPin,
-Variable,+,gpio_i2c_power_sda,const GpioPin,
+Variable,+,gpio_i2c_1_scl,const GpioPin,
+Variable,+,gpio_i2c_1_sda,const GpioPin,
+Variable,+,gpio_i2c_3_scl,const GpioPin,
+Variable,+,gpio_i2c_3_sda,const GpioPin,
 Variable,+,gpio_ibutton,const GpioPin,
 Variable,+,gpio_infrared_rx,const GpioPin,
 Variable,+,gpio_infrared_tx,const GpioPin,
+Variable,+,gpio_mcp_int,const GpioPin,
 Variable,+,gpio_nfc_cs,const GpioPin,
 Variable,+,gpio_nfc_irq_rfid_pull,const GpioPin,
 Variable,+,gpio_pins,const GpioPinRecord[],
@@ -4426,9 +4445,8 @@ Variable,+,gpio_rfid_data_in,const GpioPin,
 Variable,+,gpio_sdcard_cs,const GpioPin,
 Variable,+,gpio_speaker,const GpioPin,
 Variable,+,gpio_spi_miso,const GpioPin,
-Variable,+,gpio_spi_miso_BTN,const GpioPin,
 Variable,+,gpio_spi_mosi,const GpioPin,
-Variable,+,gpio_spi_mosi1,const GpioPin,
+Variable,-,gpio_spi_mosi1,const GpioPin,
 Variable,+,gpio_spi_sck,const GpioPin,
 Variable,+,gpio_subghz_cs,const GpioPin,
 Variable,+,gpio_swclk,const GpioPin,

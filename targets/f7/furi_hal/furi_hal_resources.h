@@ -69,8 +69,8 @@ extern const GpioPin gpio_cc1101_g0;
 
 extern const GpioPin gpio_subghz_cs;
 extern const GpioPin gpio_display_cs;
-extern const GpioPin gpio_display_rst_n;
-extern const GpioPin gpio_display_di;
+//extern const GpioPin gpio_display_rst_n;
+//extern const GpioPin gpio_display_di;
 extern const GpioPin gpio_sdcard_cs;
 //extern const GpioPin gpio_sdcard_cd;
 extern const GpioPin gpio_nfc_cs;
@@ -91,6 +91,10 @@ extern const GpioPin gpio_ext_pa4;
 extern const GpioPin gpio_ext_pa6;
 extern const GpioPin gpio_ext_pa7;
 
+extern const GpioPin gpio_i2c_3_sda;
+extern const GpioPin gpio_i2c_3_scl;
+extern const GpioPin gpio_mcp_int;
+
 extern const GpioPin gpio_nfc_irq_rfid_pull;
 extern const GpioPin gpio_rfid_carrier_out;
 extern const GpioPin gpio_rfid_data_in;
@@ -101,8 +105,11 @@ extern const GpioPin gpio_infrared_tx;
 
 extern const GpioPin gpio_usart_tx;
 extern const GpioPin gpio_usart_rx;
-extern const GpioPin gpio_i2c_power_sda;
-extern const GpioPin gpio_i2c_power_scl;
+extern const GpioPin gpio_i2c_1_sda;
+extern const GpioPin gpio_i2c_1_scl;
+
+
+
 
 extern const GpioPin gpio_speaker;
 
@@ -118,18 +125,18 @@ extern const GpioPin gpio_button_left;
 extern const GpioPin gpio_button_ok;
 extern const GpioPin gpio_button_back;
 
-extern const GpioPin gpio_button_IRQ;
-extern const GpioPin gpio_spi_miso_BTN;
-extern const GpioPin gpio_button_sr_latch;
+//extern const GpioPin gpio_button_IRQ;
+//extern const GpioPin gpio_spi_miso_BTN;
+//extern const GpioPin gpio_button_sr_latch;
 
 
 #define BUTTON_BACK_GPIO_Port  GPIOC
 #define BUTTON_BACK_Pin        LL_GPIO_PIN_10
-#define BUTTON_DOWN_GPIO_Port  GPIOA
+#define BUTTON_DOWN_GPIO_Port  GPIOC
 #define BUTTON_DOWN_Pin        LL_GPIO_PIN_7
 #define BUTTON_LEFT_GPIO_Port  GPIOB
 #define BUTTON_LEFT_Pin        LL_GPIO_PIN_11
-#define BUTTON_OK_GPIO_Port    GPIOH
+#define BUTTON_OK_GPIO_Port    GPIOC
 #define BUTTON_OK_Pin          LL_GPIO_PIN_3
 #define BUTTON_RIGHT_GPIO_Port GPIOB
 #define BUTTON_RIGHT_Pin       LL_GPIO_PIN_12
@@ -141,16 +148,17 @@ extern const GpioPin gpio_button_sr_latch;
 //extern const GpioPin gpio_button_sr_latch;
 
 #define CC1101_CS_GPIO_Port GPIOA
-#define CC1101_CS_Pin       LL_GPIO_PIN_10
+#define CC1101_CS_Pin       LL_GPIO_PIN_4
 #define CC1101_G0_GPIO_Port GPIOA
 #define CC1101_G0_Pin       LL_GPIO_PIN_1
 
-#define DISPLAY_CS_GPIO_Port  GPIOA
-#define DISPLAY_CS_Pin        LL_GPIO_PIN_3
-#define DISPLAY_DI_GPIO_Port  GPIOB
-#define DISPLAY_DI_Pin        LL_GPIO_PIN_1
-#define DISPLAY_RST_GPIO_Port GPIOB
-#define DISPLAY_RST_Pin       LL_GPIO_PIN_0
+
+// #define DISPLAY_CS_GPIO_Port  GPIOA
+// #define DISPLAY_CS_Pin        LL_GPIO_PIN_3
+// #define DISPLAY_DI_GPIO_Port  GPIOB
+// #define DISPLAY_DI_Pin        LL_GPIO_PIN_1
+// #define DISPLAY_RST_GPIO_Port GPIOB
+// #define DISPLAY_RST_Pin       LL_GPIO_PIN_0
 
 #define IR_RX_GPIO_Port GPIOA
 #define IR_RX_Pin       LL_GPIO_PIN_0
@@ -160,20 +168,20 @@ extern const GpioPin gpio_button_sr_latch;
 #define NFC_CS_GPIO_Port GPIOE
 #define NFC_CS_Pin       LL_GPIO_PIN_4
 
-#define PA4_GPIO_Port GPIOA
-#define PA4_Pin       LL_GPIO_PIN_4
-#define PA6_GPIO_Port GPIOB
-#define PA6_Pin       LL_GPIO_PIN_4
-#define PA7_GPIO_Port GPIOB
-#define PA7_Pin       LL_GPIO_PIN_5
+#define PA4_GPIO_Port GPIOB
+#define PA4_Pin       LL_GPIO_PIN_0
+#define PA6_GPIO_Port SPI_MISO_GPIO_Port
+#define PA6_Pin       SPI_MISO_Pin
+#define PA7_GPIO_Port SPI_MOSI_GPIO_Port
+#define PA7_Pin       SPI_MOSI_Pin
 #define PB2_GPIO_Port GPIOB
-#define PB2_Pin       LL_GPIO_PIN_2
-#define PB3_GPIO_Port GPIOB
-#define PB3_Pin       LL_GPIO_PIN_3
+#define PB2_Pin       LL_GPIO_PIN_1
+#define PB3_GPIO_Port SPI_SCK_GPIO_Port
+#define PB3_Pin       SPI_SCK_Pin
 #define PC0_GPIO_Port GPIOA
 #define PC0_Pin       LL_GPIO_PIN_7 // - PA7 /// PB9 PA10 PB7
-#define PC1_GPIO_Port GPIOC
-#define PC1_Pin       LL_GPIO_PIN_6 // - PB4 //// PB8 // PA9 PB6
+#define PC1_GPIO_Port GPIOA
+#define PC1_Pin       LL_GPIO_PIN_10 // - PB4 //// PB8 // PA9 PB6
 #define PC3_GPIO_Port GPIOA
 #define PC3_Pin       LL_GPIO_PIN_8
 
@@ -182,14 +190,25 @@ extern const GpioPin gpio_button_sr_latch;
 #define QUARTZ_32MHZ_OUT_GPIO_Port GPIOC
 #define QUARTZ_32MHZ_OUT_Pin       LL_GPIO_PIN_15
 
+// #define RFID_OUT_GPIO_Port     GPIOA
+// #define RFID_OUT_Pin           LL_GPIO_PIN_7
+// #define RFID_PULL_GPIO_Port    GPIOA
+// #define RFID_PULL_Pin          LL_GPIO_PIN_2
+// #define RFID_RF_IN_GPIO_Port   GPIOC
+// #define RFID_RF_IN_Pin         LL_GPIO_PIN_6
+// #define RFID_CARRIER_GPIO_Port GPIOC
+// #define RFID_CARRIER_Pin       LL_GPIO_PIN_0
+
+
 #define RFID_OUT_GPIO_Port     GPIOA
 #define RFID_OUT_Pin           LL_GPIO_PIN_7
 #define RFID_PULL_GPIO_Port    GPIOA
 #define RFID_PULL_Pin          LL_GPIO_PIN_2
-#define RFID_RF_IN_GPIO_Port   GPIOC
-#define RFID_RF_IN_Pin         LL_GPIO_PIN_6
-#define RFID_CARRIER_GPIO_Port GPIOC
-#define RFID_CARRIER_Pin       LL_GPIO_PIN_0
+#define RFID_RF_IN_GPIO_Port   GPIOB
+#define RFID_RF_IN_Pin         LL_GPIO_PIN_2
+#define RFID_CARRIER_GPIO_Port GPIOA
+#define RFID_CARRIER_Pin       LL_GPIO_PIN_5
+
 #define RF_SW_0_GPIO_Port GPIOC
 #define RF_SW_0_Pin       LL_GPIO_PIN_0
 
@@ -214,15 +233,23 @@ extern const GpioPin gpio_button_sr_latch;
 
 #define SPI_MISO_GPIO_Port GPIOA
 #define SPI_MISO_Pin       LL_GPIO_PIN_6
-#define SPI_MOSI_GPIO_Port1 GPIOA
-#define SPI_MOSI_Pin1       LL_GPIO_PIN_7
 #define SPI_MOSI_GPIO_Port GPIOB
 #define SPI_MOSI_Pin       LL_GPIO_PIN_5
-#define SPI_SCK_GPIO_Port  GPIOB
+#define SPI_SCK_GPIO_Port GPIOB
 #define SPI_SCK_Pin        LL_GPIO_PIN_3
 
-#define NFC_IRQ_Pin       LL_GPIO_PIN_2
-#define NFC_IRQ_GPIO_Port GPIOA
+ #define NFC_IRQ_Pin       LL_GPIO_PIN_2
+ #define NFC_IRQ_GPIO_Port GPIOA
+
+#define I2C_1_SCL_Pin       LL_GPIO_PIN_9
+#define I2C_1_SCL_GPIO_Port GPIOA
+#define I2C_1_SDA_Pin       LL_GPIO_PIN_10
+#define I2C_1_SDA_GPIO_Port GPIOA
+
+#define I2C_3_SCL_GPIO_Port GPIOA
+#define I2C_3_SCL_Pin       LL_GPIO_PIN_7
+#define I2C_3_SDA_GPIO_Port GPIOB
+#define I2C_3_SDA_Pin       LL_GPIO_PIN_4
 
 void furi_hal_resources_init_early(void);
 

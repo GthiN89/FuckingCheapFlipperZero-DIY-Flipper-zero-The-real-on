@@ -9,6 +9,13 @@
 extern "C" {
 #endif
 
+
+extern bool mcp_write_reg(uint8_t reg, uint8_t val);
+extern bool mcp_read_reg(uint8_t reg, uint8_t* val);
+extern bool mcp_write_reg_locked(uint8_t reg, uint8_t val);
+extern bool mcp_write_reg_locked_addr(uint8_t addr, uint8_t reg, uint8_t val);
+
+
 typedef void (*Mcp23017IntCallback)(void* ctx);
 
 // Set which I2C bus to use (power or external). Call BEFORE init().

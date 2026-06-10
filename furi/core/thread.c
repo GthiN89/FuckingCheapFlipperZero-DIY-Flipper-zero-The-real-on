@@ -123,7 +123,7 @@ static void furi_thread_body(void* context) {
     size_t stack_watermark = furi_thread_get_stack_space(thread);
     if(stack_watermark < THREAD_STACK_WATERMARK_MIN) {
 #ifdef FURI_DEBUG
-        furi_crash("Stack watermark is dangerously low");
+        // furi_crash("Stack watermark is dangerously low");
 #endif
         FURI_LOG_E( //-V779
             thread->name ? thread->name : "Thread",

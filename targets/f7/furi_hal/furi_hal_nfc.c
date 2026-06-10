@@ -18,60 +18,60 @@ const FuriHalNfcTechBase* const furi_hal_nfc_tech[FuriHalNfcTechNum] = {
 
 FuriHalNfc furi_hal_nfc;
 
-// void //furi_hal_nfc_log_irq(const char* action, uint32_t irq_mask) {
-//     if(irq_mask == ST25R3916_IRQ_MASK_NONE) {
-//         FURI_LOG_D(TAG, "%s: ST25R3916_IRQ_MASK_NONE (0x00000000)", action);
-//         return;
-//     }
-//     if(irq_mask == ST25R3916_IRQ_MASK_ALL) {
-//         FURI_LOG_D(TAG, "%s: ST25R3916_IRQ_MASK_ALL (0xFFFFFFFF)", action);
-//         return;
-//     }
+void furi_hal_nfc_log_irq(const char* action, uint32_t irq_mask) {
+    if(irq_mask == ST25R3916_IRQ_MASK_NONE) {
+        FURI_LOG_D(TAG, "%s: ST25R3916_IRQ_MASK_NONE (0x00000000)", action);
+        return;
+    }
+    if(irq_mask == ST25R3916_IRQ_MASK_ALL) {
+        FURI_LOG_D(TAG, "%s: ST25R3916_IRQ_MASK_ALL (0xFFFFFFFF)", action);
+        return;
+    }
 
-//     FURI_LOG_D(TAG, "%s with mask 0x%08lX:", action, irq_mask);
-//     if(irq_mask & ST25R3916_IRQ_MASK_OSC) FURI_LOG_D(TAG, "  - OSC: Oscillator stable");
-//     if(irq_mask & ST25R3916_IRQ_MASK_FWL) FURI_LOG_D(TAG, "  - FWL: FIFO water level");
-//     if(irq_mask & ST25R3916_IRQ_MASK_RXS) FURI_LOG_D(TAG, "  - RXS: Start of receive");
-//     if(irq_mask & ST25R3916_IRQ_MASK_RXE) FURI_LOG_D(TAG, "  - RXE: End of receive");
-//     if(irq_mask & ST25R3916_IRQ_MASK_TXE) FURI_LOG_D(TAG, "  - TXE: End of transmission");
-//     if(irq_mask & ST25R3916_IRQ_MASK_COL) FURI_LOG_D(TAG, "  - COL: Bit collision");
-//     if(irq_mask & ST25R3916_IRQ_MASK_RX_REST)
-//         FURI_LOG_D(TAG, "  - RX_REST: Automatic reception restart");
-//     if(irq_mask & ST25R3916_IRQ_MASK_DCT)
-//         FURI_LOG_D(TAG, "  - DCT: Termination of direct command");
-//     if(irq_mask & ST25R3916_IRQ_MASK_NRE) FURI_LOG_D(TAG, "  - NRE: No-response timer expired");
-//     if(irq_mask & ST25R3916_IRQ_MASK_GPE)
-//         FURI_LOG_D(TAG, "  - GPE: General purpose timer expired");
-//     if(irq_mask & ST25R3916_IRQ_MASK_EON) FURI_LOG_D(TAG, "  - EON: External field on");
-//     if(irq_mask & ST25R3916_IRQ_MASK_EOF) FURI_LOG_D(TAG, "  - EOF: External field off");
-//     if(irq_mask & ST25R3916_IRQ_MASK_CAC)
-//         FURI_LOG_D(TAG, "  - CAC: Collision during RF collision avoidance");
-//     if(irq_mask & ST25R3916_IRQ_MASK_CAT) FURI_LOG_D(TAG, "  - CAT: Minimum guard time expired");
-//     if(irq_mask & ST25R3916_IRQ_MASK_NFCT)
-//         FURI_LOG_D(TAG, "  - NFCT: Initiator bit rate recognised");
-//     if(irq_mask & ST25R3916_IRQ_MASK_CRC) FURI_LOG_D(TAG, "  - CRC: CRC error");
-//     if(irq_mask & ST25R3916_IRQ_MASK_PAR) FURI_LOG_D(TAG, "  - PAR: Parity error");
-//     if(irq_mask & ST25R3916_IRQ_MASK_ERR2) FURI_LOG_D(TAG, "  - ERR2: Soft framing error");
-//     if(irq_mask & ST25R3916_IRQ_MASK_ERR1) FURI_LOG_D(TAG, "  - ERR1: Hard framing error");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WT) FURI_LOG_D(TAG, "  - WT: Wake-up interrupt");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WAM) FURI_LOG_D(TAG, "  - WAM: Wake-up due to amplitude");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WPH) FURI_LOG_D(TAG, "  - WPH: Wake-up due to phase");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WCAP)
-//         FURI_LOG_D(TAG, "  - WCAP: Wake-up due to capacitance measurement");
-//     if(irq_mask & ST25R3916_IRQ_MASK_PPON2) FURI_LOG_D(TAG, "  - PPON2: Field on waiting Timer");
-//     if(irq_mask & ST25R3916_IRQ_MASK_SL_WL)
-//         FURI_LOG_D(TAG, "  - SL_WL: Passive target slot number water level");
-//     if(irq_mask & ST25R3916_IRQ_MASK_APON)
-//         FURI_LOG_D(TAG, "  - APON: Anticollision done and Field On");
-//     if(irq_mask & ST25R3916_IRQ_MASK_RXE_PTA)
-//         FURI_LOG_D(TAG, "  - RXE_PTA: RXE with an automatic response");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WU_F)
-//         FURI_LOG_D(TAG, "  - WU_F: 212/424b/s Passive target Active");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WU_A_X)
-//         FURI_LOG_D(TAG, "  - WU_A_X: 106kb/s Passive target state Active*");
-//     if(irq_mask & ST25R3916_IRQ_MASK_WU_A)
-//         FURI_LOG_D(TAG, "  - WU_A: 106kb/s Passive target state Active");
-// }
+    FURI_LOG_D(TAG, "%s with mask 0x%08lX:", action, irq_mask);
+    if(irq_mask & ST25R3916_IRQ_MASK_OSC) FURI_LOG_D(TAG, "  - OSC: Oscillator stable");
+    if(irq_mask & ST25R3916_IRQ_MASK_FWL) FURI_LOG_D(TAG, "  - FWL: FIFO water level");
+    if(irq_mask & ST25R3916_IRQ_MASK_RXS) FURI_LOG_D(TAG, "  - RXS: Start of receive");
+    if(irq_mask & ST25R3916_IRQ_MASK_RXE) FURI_LOG_D(TAG, "  - RXE: End of receive");
+    if(irq_mask & ST25R3916_IRQ_MASK_TXE) FURI_LOG_D(TAG, "  - TXE: End of transmission");
+    if(irq_mask & ST25R3916_IRQ_MASK_COL) FURI_LOG_D(TAG, "  - COL: Bit collision");
+    if(irq_mask & ST25R3916_IRQ_MASK_RX_REST)
+        FURI_LOG_D(TAG, "  - RX_REST: Automatic reception restart");
+    if(irq_mask & ST25R3916_IRQ_MASK_DCT)
+        FURI_LOG_D(TAG, "  - DCT: Termination of direct command");
+    if(irq_mask & ST25R3916_IRQ_MASK_NRE) FURI_LOG_D(TAG, "  - NRE: No-response timer expired");
+    if(irq_mask & ST25R3916_IRQ_MASK_GPE)
+        FURI_LOG_D(TAG, "  - GPE: General purpose timer expired");
+    if(irq_mask & ST25R3916_IRQ_MASK_EON) FURI_LOG_D(TAG, "  - EON: External field on");
+    if(irq_mask & ST25R3916_IRQ_MASK_EOF) FURI_LOG_D(TAG, "  - EOF: External field off");
+    if(irq_mask & ST25R3916_IRQ_MASK_CAC)
+        FURI_LOG_D(TAG, "  - CAC: Collision during RF collision avoidance");
+    if(irq_mask & ST25R3916_IRQ_MASK_CAT) FURI_LOG_D(TAG, "  - CAT: Minimum guard time expired");
+    if(irq_mask & ST25R3916_IRQ_MASK_NFCT)
+        FURI_LOG_D(TAG, "  - NFCT: Initiator bit rate recognised");
+    if(irq_mask & ST25R3916_IRQ_MASK_CRC) FURI_LOG_D(TAG, "  - CRC: CRC error");
+    if(irq_mask & ST25R3916_IRQ_MASK_PAR) FURI_LOG_D(TAG, "  - PAR: Parity error");
+    if(irq_mask & ST25R3916_IRQ_MASK_ERR2) FURI_LOG_D(TAG, "  - ERR2: Soft framing error");
+    if(irq_mask & ST25R3916_IRQ_MASK_ERR1) FURI_LOG_D(TAG, "  - ERR1: Hard framing error");
+    if(irq_mask & ST25R3916_IRQ_MASK_WT) FURI_LOG_D(TAG, "  - WT: Wake-up interrupt");
+    if(irq_mask & ST25R3916_IRQ_MASK_WAM) FURI_LOG_D(TAG, "  - WAM: Wake-up due to amplitude");
+    if(irq_mask & ST25R3916_IRQ_MASK_WPH) FURI_LOG_D(TAG, "  - WPH: Wake-up due to phase");
+    if(irq_mask & ST25R3916_IRQ_MASK_WCAP)
+        FURI_LOG_D(TAG, "  - WCAP: Wake-up due to capacitance measurement");
+    if(irq_mask & ST25R3916_IRQ_MASK_PPON2) FURI_LOG_D(TAG, "  - PPON2: Field on waiting Timer");
+    if(irq_mask & ST25R3916_IRQ_MASK_SL_WL)
+        FURI_LOG_D(TAG, "  - SL_WL: Passive target slot number water level");
+    if(irq_mask & ST25R3916_IRQ_MASK_APON)
+        FURI_LOG_D(TAG, "  - APON: Anticollision done and Field On");
+    if(irq_mask & ST25R3916_IRQ_MASK_RXE_PTA)
+        FURI_LOG_D(TAG, "  - RXE_PTA: RXE with an automatic response");
+    if(irq_mask & ST25R3916_IRQ_MASK_WU_F)
+        FURI_LOG_D(TAG, "  - WU_F: 212/424b/s Passive target Active");
+    if(irq_mask & ST25R3916_IRQ_MASK_WU_A_X)
+        FURI_LOG_D(TAG, "  - WU_A_X: 106kb/s Passive target state Active*");
+    if(irq_mask & ST25R3916_IRQ_MASK_WU_A)
+        FURI_LOG_D(TAG, "  - WU_A: 106kb/s Passive target state Active");
+}
 
 static FuriHalNfcError furi_hal_nfc_turn_on_osc(const FuriHalSpiBusHandle* handle) {
     FURI_LOG_D(TAG, "Turning on oscillator");
@@ -86,10 +86,10 @@ static FuriHalNfcError furi_hal_nfc_turn_on_osc(const FuriHalSpiBusHandle* handl
            ST25R3916_REG_OP_CONTROL_en)) {
         FURI_LOG_D(TAG, "Oscillator not enabled, enabling it now");
         uint32_t irq_to_enable = ST25R3916_IRQ_MASK_OSC;
-        //furi_hal_nfc_log_irq("Enabling IRQ", irq_to_enable);
+        furi_hal_nfc_log_irq("Enabling IRQ", irq_to_enable);
         st25r3916_mask_irq(handle, ~irq_to_enable);
         st25r3916_set_reg_bits(handle, ST25R3916_REG_OP_CONTROL, ST25R3916_REG_OP_CONTROL_en);
-        //furi_hal_nfc_log_irq("Waiting for specific IRQ", ST25R3916_IRQ_MASK_OSC);
+        furi_hal_nfc_log_irq("Waiting for specific IRQ", ST25R3916_IRQ_MASK_OSC);
         if(furi_hal_nfc_event_wait_for_specific_irq(handle, ST25R3916_IRQ_MASK_OSC, 10)) {
             FURI_LOG_D(TAG, "IRQ wait successful: Oscillator is stable.");
         } else {
@@ -97,7 +97,7 @@ static FuriHalNfcError furi_hal_nfc_turn_on_osc(const FuriHalSpiBusHandle* handl
         }
     }
     // Disable IRQs
-    //furi_hal_nfc_log_irq("Disabling all IRQs", ST25R3916_IRQ_MASK_ALL);
+    furi_hal_nfc_log_irq("Disabling all IRQs", ST25R3916_IRQ_MASK_ALL);
     st25r3916_mask_irq(handle, ST25R3916_IRQ_MASK_ALL);
 
     bool osc_on = st25r3916_check_reg(
@@ -166,20 +166,20 @@ FuriHalNfcError furi_hal_nfc_init(void) {
         uint8_t chip_id = 0;
         st25r3916_read_reg(handle, ST25R3916_REG_IC_IDENTITY, &chip_id);
         FURI_LOG_D(TAG, "Read Chip ID: 0x%02X", chip_id);
-        if((chip_id & ST25R3916_REG_IC_IDENTITY_ic_type_mask) !=
-           ST25R3916_REG_IC_IDENTITY_ic_type_st25r3916) {
-            FURI_LOG_E(TAG, "Wrong chip id");
-            error = FuriHalNfcErrorCommunication;
-            furi_hal_nfc_low_power_mode_start(); // This function contains acquire/release, nested calls.
-            furi_hal_nfc_release(); // Release here if we acquired earlier.
-            break;
-        }
+        // if((chip_id & ST25R3916_REG_IC_IDENTITY_ic_type_mask) !=
+        //    ST25R3916_REG_IC_IDENTITY_ic_type_st25r3916) {
+        //     FURI_LOG_E(TAG, "Wrong chip id");
+        //     error = FuriHalNfcErrorCommunication;
+        //     furi_hal_nfc_low_power_mode_start(); // This function contains acquire/release, nested calls.
+        //     furi_hal_nfc_release(); // Release here if we acquired earlier.
+        //     break;
+        // }
         FURI_LOG_D(TAG, "Clearing and masking interrupts");
         // Clear interrupts
-      //  uint32_t pending_irqs = st25r3916_get_irq(handle);
-        //furi_hal_nfc_log_irq("Cleared pending IRQs", pending_irqs);
+        uint32_t pending_irqs = st25r3916_get_irq(handle);
+        furi_hal_nfc_log_irq("Cleared pending IRQs", pending_irqs);
         // Mask all interrupts
-        //furi_hal_nfc_log_irq("Masking all IRQs", ST25R3916_IRQ_MASK_ALL);
+        furi_hal_nfc_log_irq("Masking all IRQs", ST25R3916_IRQ_MASK_ALL);
         st25r3916_mask_irq(handle, ST25R3916_IRQ_MASK_ALL);
         FURI_LOG_D(TAG, "Initializing GPIO ISR");
         // Enable interrupts
@@ -208,17 +208,17 @@ FuriHalNfcError furi_hal_nfc_init(void) {
         // Enable timer and interrupt register
         FURI_LOG_D(TAG, "Enable timer and interrupt register");
         uint32_t irq_to_enable = ST25R3916_IRQ_MASK_DCT;
-        //furi_hal_nfc_log_irq("Enabling IRQ for measurement", irq_to_enable);
+        furi_hal_nfc_log_irq("Enabling IRQ for measurement", irq_to_enable);
         st25r3916_mask_irq(handle, ~irq_to_enable);
         st25r3916_direct_cmd(handle, ST25R3916_CMD_MEASURE_VDD);
         FURI_LOG_D(TAG, "furi_hal_nfc_event_wait_for_specific_irq");
-        //furi_hal_nfc_log_irq("Waiting for specific IRQ", ST25R3916_IRQ_MASK_DCT);
+        furi_hal_nfc_log_irq("Waiting for specific IRQ", ST25R3916_IRQ_MASK_DCT);
         if(furi_hal_nfc_event_wait_for_specific_irq(handle, ST25R3916_IRQ_MASK_DCT, 100)) {
             FURI_LOG_D(TAG, "IRQ wait successful: Direct command finished.");
         } else {
             FURI_LOG_W(TAG, "IRQ wait TIMED OUT for direct command.");
         }
-        //furi_hal_nfc_log_irq("Masking all IRQs", ST25R3916_IRQ_MASK_ALL);
+        furi_hal_nfc_log_irq("Masking all IRQs", ST25R3916_IRQ_MASK_ALL);
         st25r3916_mask_irq(handle, ST25R3916_IRQ_MASK_ALL);
         uint8_t ad_res = 0;
         st25r3916_read_reg(handle, ST25R3916_REG_AD_RESULT, &ad_res);
@@ -664,10 +664,10 @@ FuriHalNfcError furi_hal_nfc_poller_tx_common(
          ST25R3916_IRQ_MASK_RXE | ST25R3916_IRQ_MASK_PAR | ST25R3916_IRQ_MASK_CRC |
          ST25R3916_IRQ_MASK_ERR1 | ST25R3916_IRQ_MASK_ERR2 | ST25R3916_IRQ_MASK_NRE);
     // Clear interrupts
-    //uint32_t pending_irqs = st25r3916_get_irq(handle);
-    //furi_hal_nfc_log_irq("Cleared pending IRQs before TX", pending_irqs);
+    uint32_t pending_irqs = st25r3916_get_irq(handle);
+    furi_hal_nfc_log_irq("Cleared pending IRQs before TX", pending_irqs);
     // Enable interrupts
-    //furi_hal_nfc_log_irq("Enabling IRQs for TX/RX", interrupts);
+    furi_hal_nfc_log_irq("Enabling IRQs for TX/RX", interrupts);
     st25r3916_mask_irq(handle, ~interrupts);
 
     st25r3916_write_fifo(handle, tx_data, tx_bits);
@@ -720,7 +720,9 @@ FuriHalNfcEvent furi_hal_nfc_poller_wait_event(uint32_t timeout_ms) {
 }
 
 FuriHalNfcEvent furi_hal_nfc_listener_wait_event(uint32_t timeout_ms) {
+        FURI_LOG_T(TAG, "Poller ");
     furi_check(furi_hal_nfc.mode == FuriHalNfcModeListener);
+    FURI_LOG_T(TAG, "Poller 1");
     furi_check(furi_hal_nfc.tech < FuriHalNfcTechNum);
     FURI_LOG_T(TAG, "Listener wait event for tech %d", furi_hal_nfc.tech);
 
@@ -737,7 +739,6 @@ FuriHalNfcError furi_hal_nfc_listener_tx(const uint8_t* tx_data, size_t tx_bits)
 
     const FuriHalSpiBusHandle* handle = &furi_hal_spi_bus_handle_nfc;
 
-    furi_hal_nfc_release();
 
     return furi_hal_nfc_tech[furi_hal_nfc.tech]->listener.tx(handle, tx_data, tx_bits);
 }
@@ -766,7 +767,6 @@ FuriHalNfcError furi_hal_nfc_listener_rx(uint8_t* rx_data, size_t rx_data_size, 
     furi_check(furi_hal_nfc.mode == FuriHalNfcModeListener);
     furi_check(furi_hal_nfc.tech < FuriHalNfcTechNum);
     FURI_LOG_T(TAG, "Listener RX for tech %d", furi_hal_nfc.tech);
-    furi_hal_nfc_acquire();
     const FuriHalSpiBusHandle* handle = &furi_hal_spi_bus_handle_nfc;
     return furi_hal_nfc_tech[furi_hal_nfc.tech]->listener.rx(
         handle, rx_data, rx_data_size, rx_bits);

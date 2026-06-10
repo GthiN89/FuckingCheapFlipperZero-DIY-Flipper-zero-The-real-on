@@ -51,9 +51,9 @@ static bool flipper_update_init(void) {
     furi_hal_spi_config_init();
 
     fatfs_init();
-    if(!furi_hal_sd_is_present()) {
-        return false;
-    }
+    // if(!furi_hal_sd_is_present()) {
+    //     return false;
+    // }
 
     pfs = malloc(sizeof(FATFS));
 

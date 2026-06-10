@@ -176,8 +176,8 @@ void storage_settings_scene_benchmark_on_exit(void* context) {
     StorageSettings* app = context;
     DialogEx* dialog_ex = app->dialog_ex;
 
-    NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
-    notification_message(notification, &sequence_reset_green);
+    //NotificationApp* notification = furi_record_open(RECORD_NOTIFICATION);
+    //notification_message(notification, &sequence_reset_green);
     furi_record_close(RECORD_NOTIFICATION);
 
     dialog_ex_reset(dialog_ex);

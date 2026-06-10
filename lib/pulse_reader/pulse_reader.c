@@ -48,9 +48,25 @@ struct PulseReader {
 #define GET_DMAMUX_EXTI_LINE(pin) GPIO_PIN_MAP(pin, LL_DMAMUX_REQ_GEN_EXTI_LINE)
 
 PulseReader* pulse_reader_alloc(const GpioPin* gpio, uint32_t size) {
+    if(!gpio) return NULL;
+    if(size == 0) return NULL;
+
     PulseReader* signal = malloc(sizeof(PulseReader));
+    if(!signal) return NULL;
+
     signal->timer_buffer = malloc(size * sizeof(uint32_t));
+    if(!signal->timer_buffer) {
+        free(signal);
+        return NULL;
+    }
+
     signal->gpio_buffer = malloc(size * sizeof(uint32_t));
+    if(!signal->gpio_buffer) {
+        free(signal->timer_buffer);
+        free(signal);
+        return NULL;
+    }
+
     signal->dma_channel = LL_DMA_CHANNEL_4;
     signal->gpio = gpio;
     signal->pull = GpioPullNo;

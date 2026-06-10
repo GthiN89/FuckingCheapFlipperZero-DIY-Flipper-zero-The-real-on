@@ -12,7 +12,7 @@ void desktop_scene_secure_enclave_callback(void* context) {
 void desktop_scene_secure_enclave_on_enter(void* context) {
     Desktop* desktop = (Desktop*)context;
     furi_assert(desktop);
-
+    view_dispatcher_send_custom_event(desktop->view_dispatcher, DesktopEnclaveExit);
     Popup* popup = desktop->popup;
     popup_set_context(popup, desktop);
     popup_set_header(

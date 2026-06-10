@@ -25,9 +25,9 @@ typedef struct {
 
 const NotificationSequence sequence_alarm = {
     &message_force_speaker_volume_setting_1f,
-    &message_force_vibro_setting_on,
+
     &message_force_display_brightness_setting_1f,
-    &message_vibro_on,
+    
 
     &message_display_backlight_on,
     &message_note_c7,
@@ -46,7 +46,7 @@ const NotificationSequence sequence_alarm = {
     &message_delay_250,
 
     &message_sound_off,
-    &message_vibro_off,
+    
     NULL,
 };
 

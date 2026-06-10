@@ -1,7 +1,7 @@
 #include <core/common_defines.h>
 #include <furi_hal_resources.h>
 #include <furi_hal_light.h>
-#include <lp5562.h>
+#include <furi_hal_mcp23017.h>
 #include <stdint.h>
 #include <momentum/momentum.h>
 #include <rgb_backlight.h>
@@ -12,87 +12,51 @@
 #define LED_CURRENT_WHITE (150u)
 
 void furi_hal_light_init(void) {
-    furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
-
-    lp5562_reset(&furi_hal_i2c_handle_power);
-
-    lp5562_set_channel_current(&furi_hal_i2c_handle_power, LP5562ChannelRed, LED_CURRENT_RED);
-    lp5562_set_channel_current(&furi_hal_i2c_handle_power, LP5562ChannelGreen, LED_CURRENT_GREEN);
-    lp5562_set_channel_current(&furi_hal_i2c_handle_power, LP5562ChannelBlue, LED_CURRENT_BLUE);
-    lp5562_set_channel_current(&furi_hal_i2c_handle_power, LP5562ChannelWhite, LED_CURRENT_WHITE);
-
-    lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelRed, 0x00);
-    lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelGreen, 0x00);
-    lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelBlue, 0x00);
-    lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelWhite, 0x00);
-
-    lp5562_enable(&furi_hal_i2c_handle_power);
-    lp5562_configure(&furi_hal_i2c_handle_power);
-
-    furi_hal_i2c_release(&furi_hal_i2c_handle_power);
+    // Initialize RGB LED on MCP23017
+    furi_hal_mcp23017_led_init();
 }
 
 void furi_hal_light_set(Light light, uint8_t value) {
-    furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
+    // MCP23017 only supports on/off, not PWM brightness
+    // Treat any value > 0x7F as "on"
+    bool on = (value > 0x7F);
+    
     if(light & LightRed) {
-        lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelRed, value);
+        furi_hal_mcp23017_led_set_red(on);
     }
     if(light & LightGreen) {
-        lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelGreen, value);
+        furi_hal_mcp23017_led_set_green(on);
     }
     if(light & LightBlue) {
-        lp5562_set_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelBlue, value);
+        furi_hal_mcp23017_led_set_blue(on);
     }
     if(light & LightBacklight) {
         if(momentum_settings.rgb_backlight) {
             rgb_backlight_update(value, false);
-        } else {
-            uint8_t prev =
-                lp5562_get_channel_value(&furi_hal_i2c_handle_power, LP5562ChannelWhite);
-            lp5562_execute_ramp(
-                &furi_hal_i2c_handle_power, LP5562Engine1, LP5562ChannelWhite, prev, value, 100);
         }
+        // Note: Backlight is separate from RGB LED on MCP23017
     }
-    furi_hal_i2c_release(&furi_hal_i2c_handle_power);
 }
 
 void furi_hal_light_blink_start(Light light, uint8_t brightness, uint16_t on_time, uint16_t period) {
-    furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
-    lp5562_set_channel_src(
-        &furi_hal_i2c_handle_power,
-        LP5562ChannelRed | LP5562ChannelGreen | LP5562ChannelBlue,
-        LP5562Direct);
-    LP5562Channel led_ch = 0;
-    if(light & LightRed) led_ch |= LP5562ChannelRed;
-    if(light & LightGreen) led_ch |= LP5562ChannelGreen;
-    if(light & LightBlue) led_ch |= LP5562ChannelBlue;
-    lp5562_execute_blink(
-        &furi_hal_i2c_handle_power, LP5562Engine2, led_ch, on_time, period, brightness);
-    furi_hal_i2c_release(&furi_hal_i2c_handle_power);
+    // MCP23017 doesn't support hardware blinking, so just turn LED on at max brightness
+    UNUSED(brightness);
+    UNUSED(on_time);
+    UNUSED(period);
+    furi_hal_light_set(light, 0xFF);
 }
 
 void furi_hal_light_blink_stop(void) {
-    furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
-    lp5562_set_channel_src(
-        &furi_hal_i2c_handle_power,
-        LP5562ChannelRed | LP5562ChannelGreen | LP5562ChannelBlue,
-        LP5562Direct);
-    lp5562_stop_program(&furi_hal_i2c_handle_power, LP5562Engine2);
-    furi_hal_i2c_release(&furi_hal_i2c_handle_power);
+    // Stop blinking by turning LED off
+    furi_hal_mcp23017_led_off();
 }
 
 void furi_hal_light_blink_set_color(Light light) {
-    furi_hal_i2c_acquire(&furi_hal_i2c_handle_power);
-    LP5562Channel led_ch = 0;
-    lp5562_set_channel_src(
-        &furi_hal_i2c_handle_power,
-        LP5562ChannelRed | LP5562ChannelGreen | LP5562ChannelBlue,
-        LP5562Direct);
-    if(light & LightRed) led_ch |= LP5562ChannelRed;
-    if(light & LightGreen) led_ch |= LP5562ChannelGreen;
-    if(light & LightBlue) led_ch |= LP5562ChannelBlue;
-    lp5562_set_channel_src(&furi_hal_i2c_handle_power, led_ch, LP5562Engine2);
-    furi_hal_i2c_release(&furi_hal_i2c_handle_power);
+    // For MCP23017, just set the LED color (on/off)
+    bool red = (light & LightRed) != 0;
+    bool green = (light & LightGreen) != 0;
+    bool blue = (light & LightBlue) != 0;
+    furi_hal_mcp23017_led_set_color(red, green, blue);
 }
 
 void furi_hal_light_sequence(const char* sequence) {

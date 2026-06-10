@@ -1,0 +1,3 @@
+Import('env')
+
+env.Program(target='ina219_scan', source=['ina219_scan.c'])

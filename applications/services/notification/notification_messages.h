@@ -50,7 +50,7 @@ extern const NotificationMessage message_delay_1000;
 // Sound
 extern const NotificationMessage message_sound_off;
 
-// Vibro
+// Vibration
 extern const NotificationMessage message_vibro_on;
 extern const NotificationMessage message_vibro_off;
 

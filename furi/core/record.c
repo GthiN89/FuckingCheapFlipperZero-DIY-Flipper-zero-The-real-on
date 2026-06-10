@@ -80,7 +80,6 @@ bool furi_record_exists(const char* name) {
 void furi_record_create(const char* name, void* data) {
     furi_check(furi_record);
     furi_check(name);
-    furi_check(data);
 
     furi_record_lock();
 

@@ -5,6 +5,8 @@
 
 #include <furi.h>
 
+#define TAG "NfcListener"
+
 typedef struct NfcListenerListElement {
     NfcProtocol protocol;
     NfcGenericInstance* listener;
@@ -25,6 +27,8 @@ struct NfcListener {
 };
 
 static void nfc_listener_list_alloc(NfcListener* instance) {
+    FURI_LOG_D(TAG, "Allocating list for protocol: %d", instance->protocol);
+    
     instance->list.head = malloc(sizeof(NfcListenerListElement));
     instance->list.head->protocol = instance->protocol;
 
@@ -48,12 +52,15 @@ static void nfc_listener_list_alloc(NfcListener* instance) {
     // Allocate listener instances
     NfcListenerListElement* iter = instance->list.head;
     NfcDeviceData* data_tmp = nfc_device_get_data_ptr(instance->nfc_dev, iter->protocol);
+    
     iter->listener = iter->listener_api->alloc(instance->nfc, data_tmp);
 
     do {
         if(iter->child == NULL) break;
         data_tmp = nfc_device_get_data_ptr(instance->nfc_dev, iter->child->protocol);
+        
         iter->child->listener = iter->child->listener_api->alloc(iter->listener, data_tmp);
+        
         iter->listener_api->set_callback(
             iter->listener, iter->child->listener_api->run, iter->child->listener);
 
@@ -73,6 +80,7 @@ static void nfc_listener_list_free(NfcListener* instance) {
 }
 
 NfcListener* nfc_listener_alloc(Nfc* nfc, NfcProtocol protocol, const NfcDeviceData* data) {
+    FURI_LOG_I(TAG, "Allocating Emulation Listener. Protocol: %d", protocol);
     furi_check(nfc);
     furi_check(protocol < NfcProtocolNum);
     furi_check(data);
@@ -82,6 +90,7 @@ NfcListener* nfc_listener_alloc(Nfc* nfc, NfcProtocol protocol, const NfcDeviceD
     instance->nfc = nfc;
     instance->protocol = protocol;
     instance->nfc_dev = nfc_device_alloc();
+    
     nfc_device_set_data(instance->nfc_dev, protocol, data);
     nfc_listener_list_alloc(instance);
 
@@ -89,6 +98,7 @@ NfcListener* nfc_listener_alloc(Nfc* nfc, NfcProtocol protocol, const NfcDeviceD
 }
 
 void nfc_listener_free(NfcListener* instance) {
+    FURI_LOG_I(TAG, "Freeing Listener");
     furi_check(instance);
 
     nfc_listener_list_free(instance);
@@ -96,6 +106,8 @@ void nfc_listener_free(NfcListener* instance) {
     free(instance);
 }
 
+// ⚠️ CRITICAL: DO NOT add FURI_LOG or Mutex Locks in this function. 
+// It is called hundreds of times per second. Logging here will crash the Flipper.
 NfcCommand nfc_listener_start_callback(NfcEvent event, void* context) {
     furi_assert(context);
 
@@ -116,6 +128,7 @@ NfcCommand nfc_listener_start_callback(NfcEvent event, void* context) {
 }
 
 void nfc_listener_start(NfcListener* instance, NfcGenericCallback callback, void* context) {
+    FURI_LOG_I(TAG, "Starting Emulation Thread");
     furi_check(instance);
 
     NfcListenerListElement* tail_element = instance->list.tail;
@@ -124,6 +137,7 @@ void nfc_listener_start(NfcListener* instance, NfcGenericCallback callback, void
 }
 
 void nfc_listener_stop(NfcListener* instance) {
+    FURI_LOG_I(TAG, "Stopping Emulation Thread");
     furi_check(instance);
 
     nfc_stop(instance->nfc);
@@ -131,7 +145,6 @@ void nfc_listener_stop(NfcListener* instance) {
 
 NfcProtocol nfc_listener_get_protocol(const NfcListener* instance) {
     furi_check(instance);
-
     return instance->protocol;
 }
 
