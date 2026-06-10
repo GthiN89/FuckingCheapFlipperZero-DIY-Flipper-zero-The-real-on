@@ -17,7 +17,7 @@ GPIOItems* gpio_items_alloc(void) {
         }
     }
 
-    items->pins = malloc(sizeof(GpioPinRecord) * items->count);
+    items->pins = items->count > 0 ? malloc(sizeof(GpioPinRecord) * items->count) : NULL;
     size_t index = 0;
     for(size_t i = 0; i < gpio_pins_count; i++) {
         if(!gpio_pins[i].debug) {

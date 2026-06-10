@@ -2,7 +2,6 @@
  * @file furi_hal_power.h
  * Power HAL API
  */
-#define USE_INA219
 
 #pragma once
 
@@ -11,6 +10,20 @@
 #include <core/string.h>
 #include <core/common_defines.h>
 #include <toolbox/property.h>
+
+// Use INA219 for power measurements, comment out to use ADC-based measurements
+#define USE_INA219
+
+/* Enable INA219 power measurement if defined in the target build.
+ * Define USE_INA219 to use the INA219 I2C sensor for voltage and current
+ * measurements. When undefined the code falls back to ADC-based readings.
+ */
+/* If your target adds the INA219 hardware, enable it by defining
+ * `USE_INA219` in the build system or uncommenting the define below. The
+ * actual driver is provided as a small HAL wrapper in:
+ *  targets/f7/furi_hal/furi_hal_ina219.{c,h}
+ */
+/* #define USE_INA219 */
 
 #ifdef __cplusplus
 extern "C" {
