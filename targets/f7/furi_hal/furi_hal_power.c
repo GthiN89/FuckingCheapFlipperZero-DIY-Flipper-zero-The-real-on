@@ -76,7 +76,7 @@ void furi_hal_power_init(void) {
     FURI_LOG_I(TAG, "Initializing INA219 power sensor");
     // Initialize our INA219 wrapper; detection result stored internally
     furi_hal_ina219_init();
-    FURI_LOG_I(TAG, "INA219 initialization complete");
+//FURI_LOG_I(TAG, "INA219 initialization complete");
     return;
 #else
     // INA219 not used, do nothing
@@ -412,7 +412,7 @@ bool furi_hal_power_is_charging(void) {
             // Positive current indicates discharging, negative indicates charging
             bool charging = (i > 0.0f);
             FURI_LOG_D(TAG, "INA219 voltage=%.3f V, current=%.3f A, charging=%s", (double)v, (double)i, charging ? "YES" : "NO");
-            return charging;
+            return !charging;
         }
     }
     #endif
