@@ -6,7 +6,7 @@
 
 // INA219 default I2C address (0x40)
 // Default INA219 base address; device may respond at 0x40..0x4F depending on pins
-#define INA219_I2C_ADDR_BASE 0x41
+#define INA219_I2C_ADDR_BASE 0x40
 
 // INA219 register addresses
 #define INA219_REG_CONFIG 0x00
