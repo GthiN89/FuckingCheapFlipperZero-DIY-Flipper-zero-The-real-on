@@ -228,17 +228,21 @@ void furi_hal_rfid_pins_reset(void) {
 }
 
 static void furi_hal_rfid_pins_emulate(void) {
+    // ibutton low
     furi_hal_ibutton_pin_configure();
     furi_hal_ibutton_pin_write(false);
-    
-    // Configures PA2 (rfid_ext_pin) to TIM2_CH3 output for Emulation
+
+    // В простой схеме эмуляция делается модуляцией сигнала на пине CL.
+    // PA7 поддерживает TIM2_CH3 на AF2.
+    // Переключаем PA7 (CL) на TIM2 для эмуляции.
     furi_hal_gpio_init_ex(
-        &rfid_ext_pin,
+        &gpio_rfid_carrier_out, // PA7 (CL)
         GpioModeAltFunctionPushPull,
         GpioPullNo,
         GpioSpeedLow,
-        GpioAltFn2TIM2);
+        GpioAltFn2TIM2); // AF2 is TIM2 on STM32WB55 for PA7
 }
+
 
 static void furi_hal_rfid_pins_read(void) {
     // ibutton low
@@ -296,12 +300,13 @@ void furi_hal_rfid_tim_read_stop(void) {
     furi_hal_bus_disable(FURI_HAL_RFID_READ_TIMER_BUS);
 }
 
-static void furi_hal_rfid_tim_emulate(void) {
+sstatic void furi_hal_rfid_tim_emulate(void) {
     LL_TIM_SetPrescaler(FURI_HAL_RFID_EMULATE_TIMER, 0);
     LL_TIM_SetCounterMode(FURI_HAL_RFID_EMULATE_TIMER, LL_TIM_COUNTERMODE_UP);
     LL_TIM_SetAutoReload(FURI_HAL_RFID_EMULATE_TIMER, 1);
     LL_TIM_DisableARRPreload(FURI_HAL_RFID_EMULATE_TIMER);
     LL_TIM_SetRepetitionCounter(FURI_HAL_RFID_EMULATE_TIMER, 0);
+
     LL_TIM_SetClockDivision(FURI_HAL_RFID_EMULATE_TIMER, LL_TIM_CLOCKDIVISION_DIV1);
     LL_TIM_SetClockSource(FURI_HAL_RFID_EMULATE_TIMER, LL_TIM_CLOCKSOURCE_EXT_MODE2);
     LL_TIM_ConfigETR(
@@ -309,14 +314,19 @@ static void furi_hal_rfid_tim_emulate(void) {
         LL_TIM_ETR_POLARITY_INVERTED,
         LL_TIM_ETR_PRESCALER_DIV1,
         LL_TIM_ETR_FILTER_FDIV1);
+
     LL_TIM_OC_InitTypeDef TIM_OC_InitStruct = {0};
     TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
     TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_ENABLE;
     TIM_OC_InitStruct.CompareValue = 1;
+    
+    // Используем Channel 3, который выходит на PA7 (AF2)
     LL_TIM_OC_Init(
         FURI_HAL_RFID_EMULATE_TIMER, FURI_HAL_RFID_EMULATE_TIMER_CHANNEL, &TIM_OC_InitStruct);
+
     LL_TIM_GenerateEvent_UPDATE(FURI_HAL_RFID_EMULATE_TIMER);
 }
+
 
 void furi_hal_rfid_tim_read_capture_start(FuriHalRfidReadCaptureCallback callback, void* context) {
     furi_check(furi_hal_rfid);
