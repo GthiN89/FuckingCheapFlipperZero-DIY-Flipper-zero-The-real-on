@@ -1686,14 +1686,14 @@ Function,+,furi_hal_rfid_comp_start,void,
 Function,+,furi_hal_rfid_comp_stop,void,
 Function,+,furi_hal_rfid_field_detect_start,void,
 Function,+,furi_hal_rfid_field_detect_stop,void,
-Function,+,furi_hal_rfid_field_is_present,_Bool,uint32_t*
+Function,-,furi_hal_rfid_field_is_present,_Bool,uint32_t*
 Function,-,furi_hal_rfid_init,void,
 Function,+,furi_hal_rfid_pin_pull_pulldown,void,
 Function,+,furi_hal_rfid_pin_pull_release,void,
 Function,+,furi_hal_rfid_pins_reset,void,
-Function,+,furi_hal_rfid_set_read_period,void,uint32_t
-Function,+,furi_hal_rfid_set_read_pulse,void,uint32_t
-Function,+,furi_hal_rfid_tim_emulate_dma_start,void,"uint32_t*, uint32_t*, size_t, FuriHalRfidDMACallback, void*"
+Function,-,furi_hal_rfid_set_read_period,void,uint32_t
+Function,-,furi_hal_rfid_set_read_pulse,void,uint32_t
+Function,-,furi_hal_rfid_tim_emulate_dma_start,void,"uint32_t*, uint32_t*, size_t, FuriHalRfidDMACallback, void*"
 Function,+,furi_hal_rfid_tim_emulate_dma_stop,void,
 Function,+,furi_hal_rfid_tim_read_capture_start,void,"FuriHalRfidReadCaptureCallback, void*"
 Function,+,furi_hal_rfid_tim_read_capture_stop,void,

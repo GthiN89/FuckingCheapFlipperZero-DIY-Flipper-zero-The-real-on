@@ -200,13 +200,13 @@ extern const GpioPin gpio_button_back;
 // #define RFID_CARRIER_Pin       LL_GPIO_PIN_0
 
 
-#define RFID_OUT_GPIO_Port     GPIOC
+#define RFID_OUT_GPIO_Port     GPIOA
 #define RFID_OUT_Pin           LL_GPIO_PIN_7
 #define RFID_PULL_GPIO_Port    GPIOC
 #define RFID_PULL_Pin          LL_GPIO_PIN_2
-#define RFID_RF_IN_GPIO_Port   GPIOC
+#define RFID_RF_IN_GPIO_Port   GPIOA
 #define RFID_RF_IN_Pin         LL_GPIO_PIN_2
-#define RFID_CARRIER_GPIO_Port GPIOC
+#define RFID_CARRIER_GPIO_Port GPIOA
 #define RFID_CARRIER_Pin       LL_GPIO_PIN_5
 
 #define RF_SW_0_GPIO_Port GPIOC
