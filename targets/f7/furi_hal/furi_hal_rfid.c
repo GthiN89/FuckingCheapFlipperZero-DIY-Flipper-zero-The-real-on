@@ -84,15 +84,8 @@ static void log_timer_callback(void* context) {
     }
 }
 
-
-
-// Stores the HIGH phase width until the rising edge completes the period
-static volatile uint32_t saved_pulse = 0;
-
-
-
 /**
- * PA2 GPIO Edge Interrupt - Normalizes raw timings into a symmetrical square wave
+ * PA2 GPIO Edge Interrupt - Measures raw periods and corrects polarity
  */
 static void rfid_pa2_edge_isr(void* context) {
     UNUSED(context);
@@ -103,42 +96,22 @@ static void rfid_pa2_edge_isr(void* context) {
         return;
     }
     
-    // Read elapsed time since the last rising edge (watch_stop reset)
     uint32_t elapsed = LL_TIM_GetCounter(RFID_CAPTURE_TIM);
-    
-    // Read the current physical state of the PA2 pin
     bool level = furi_hal_gpio_read(&rfid_ext_pin);
     
+    // Invert the level if your demodulator outputs active-low signal
+    level = !level;
+    
     if(level) {
-        // RISING EDGE: End of the previous cycle and start of a new pulse.
-        // The total elapsed time represents the "duration" (Rising-to-Rising period).
-        uint32_t duration_raw = elapsed;
+        uint32_t duration = elapsed;
+        if(duration <= 100) return;
         
-        // Strict noise filter restored to 100 us to block high-frequency carrier ripple
-        if(duration_raw <= 100) {
-            return;
-        }
-        
-        // Reset the stopwatch immediately for the new pulse
         LL_TIM_SetCounter(RFID_CAPTURE_TIM, 0);
-        
-        // Symmetrical duration is just duration_raw (offsets cancel out)
-        uint32_t duration;
-        if(duration_raw < 320) {
-            duration = 256;  // Standard 0.5-bit period
-        } else if(duration_raw >= 320 && duration_raw < 640) {
-            duration = 512;  // Standard 1.0-bit period
-        } else if(duration_raw >= 640 && duration_raw < 880) {
-            duration = 768;  // Standard 1.5-bit period
-        } else {
-            duration = 1024; // Standard 2.0-bit period
-        }
         
         last_level = false;
         last_duration = duration;
         edge_count++;
         
-        // Store the completed duration in the ring buffer for logging
         uint32_t next_head = (log_buffer.head + 1) % LOG_BUFFER_SIZE;
         if(next_head != log_buffer.tail) {
             log_buffer.level[log_buffer.head] = last_level;
@@ -147,7 +120,6 @@ static void rfid_pa2_edge_isr(void* context) {
             log_buffer.count++;
         }
         
-        // Call callbacks with level = false to pack value_2 (duration) and complete the pair
         if(furi_hal_rfid->read_capture_callback) {
             furi_hal_rfid->read_capture_callback(false, last_duration, furi_hal_rfid->context);
         }
@@ -156,27 +128,11 @@ static void rfid_pa2_edge_isr(void* context) {
         }
         
     } else {
-        // FALLING EDGE: End of the HIGH phase of the current pulse.
-        // The elapsed time since the rising edge represents the "pulse" width.
-        uint32_t pulse_raw = elapsed;
+        uint32_t pulse = elapsed;
+        if(pulse <= 100) return;
         
-        // Strict noise filter restored to 100 us to block high-frequency carrier ripple
-        if(pulse_raw <= 100) {
-            return;
-        }
-        
-        // Symmetrical pulse mapping using the 460us decision boundary to separate Short-HIGH from Long-HIGH
-        uint32_t pulse;
-        if(pulse_raw < 460) {
-            pulse = 256;  // Standard half-bit HIGH pulse width
-        } else {
-            pulse = 512;  // Standard full-bit HIGH pulse width
-        }
-        
-        // Save the high pulse width. Do NOT reset the timer.
         saved_pulse = pulse;
         
-        // Call callbacks with level = true to pack value_1 (pulse)
         if(furi_hal_rfid->read_capture_callback) {
             furi_hal_rfid->read_capture_callback(true, pulse, furi_hal_rfid->context);
         }
@@ -243,7 +199,6 @@ static void furi_hal_rfid_pins_emulate(void) {
         GpioAltFn2TIM2); // AF2 is TIM2 on STM32WB55 for PA7
 }
 
-
 static void furi_hal_rfid_pins_read(void) {
     // ibutton low
     furi_hal_ibutton_pin_configure();
@@ -300,7 +255,7 @@ void furi_hal_rfid_tim_read_stop(void) {
     furi_hal_bus_disable(FURI_HAL_RFID_READ_TIMER_BUS);
 }
 
-sstatic void furi_hal_rfid_tim_emulate(void) {
+static void furi_hal_rfid_tim_emulate(void) {
     LL_TIM_SetPrescaler(FURI_HAL_RFID_EMULATE_TIMER, 0);
     LL_TIM_SetCounterMode(FURI_HAL_RFID_EMULATE_TIMER, LL_TIM_COUNTERMODE_UP);
     LL_TIM_SetAutoReload(FURI_HAL_RFID_EMULATE_TIMER, 1);
@@ -408,14 +363,22 @@ void furi_hal_rfid_tim_emulate_dma_start(
     FuriHalRfidDMACallback callback,
     void* context) {
     furi_check(furi_hal_rfid);
+
+    // setup interrupts
     furi_hal_rfid->dma_callback = callback;
     furi_hal_rfid->context = context;
+
+    // setup pins
     furi_hal_rfid_pins_emulate();
+
+    // configure timer
     furi_hal_bus_enable(FURI_HAL_RFID_EMULATE_TIMER_BUS);
     furi_hal_rfid_tim_emulate();
     LL_TIM_OC_SetPolarity(
         FURI_HAL_RFID_EMULATE_TIMER, FURI_HAL_RFID_EMULATE_TIMER_CHANNEL, LL_TIM_OCPOLARITY_HIGH);
     LL_TIM_EnableDMAReq_UPDATE(FURI_HAL_RFID_EMULATE_TIMER);
+
+    // configure DMA "mem -> ARR" channel
     LL_DMA_InitTypeDef dma_config = {0};
     dma_config.PeriphOrM2MSrcAddress = (uint32_t) & (FURI_HAL_RFID_EMULATE_TIMER->ARR);
     dma_config.MemoryOrM2MDstAddress = (uint32_t)duration;
@@ -430,7 +393,10 @@ void furi_hal_rfid_tim_emulate_dma_start(
     dma_config.Priority = LL_DMA_MODE_NORMAL;
     LL_DMA_Init(RFID_DMA_CH1_DEF, &dma_config);
     LL_DMA_EnableChannel(RFID_DMA_CH1_DEF);
+
+    // configure DMA "mem -> CCR3" channel
 #if FURI_HAL_RFID_EMULATE_TIMER_CHANNEL == LL_TIM_CHANNEL_CH3
+    // Correct for PA7
     dma_config.PeriphOrM2MSrcAddress = (uint32_t) & (FURI_HAL_RFID_EMULATE_TIMER->CCR3);
 #else
 #error Update this code. Would you kindly?
@@ -447,10 +413,15 @@ void furi_hal_rfid_tim_emulate_dma_start(
     dma_config.Priority = LL_DMA_MODE_NORMAL;
     LL_DMA_Init(RFID_DMA_CH2_DEF, &dma_config);
     LL_DMA_EnableChannel(RFID_DMA_CH2_DEF);
+
+    // attach interrupt to one of DMA channels
     furi_hal_interrupt_set_isr(RFID_DMA_CH1_IRQ, furi_hal_rfid_dma_isr, NULL);
     LL_DMA_EnableIT_TC(RFID_DMA_CH1_DEF);
     LL_DMA_EnableIT_HT(RFID_DMA_CH1_DEF);
+
+    // start
     LL_TIM_EnableAllOutputs(FURI_HAL_RFID_EMULATE_TIMER);
+
     LL_TIM_SetCounter(FURI_HAL_RFID_EMULATE_TIMER, 0);
     LL_TIM_EnableCounter(FURI_HAL_RFID_EMULATE_TIMER);
 }
@@ -458,13 +429,18 @@ void furi_hal_rfid_tim_emulate_dma_start(
 void furi_hal_rfid_tim_emulate_dma_stop(void) {
     LL_TIM_DisableCounter(FURI_HAL_RFID_EMULATE_TIMER);
     LL_TIM_DisableAllOutputs(FURI_HAL_RFID_EMULATE_TIMER);
+
     furi_hal_interrupt_set_isr(RFID_DMA_CH1_IRQ, NULL, NULL);
     LL_DMA_DisableIT_TC(RFID_DMA_CH1_DEF);
     LL_DMA_DisableIT_HT(RFID_DMA_CH1_DEF);
+
     FURI_CRITICAL_ENTER();
+
     LL_DMA_DeInit(RFID_DMA_CH1_DEF);
     LL_DMA_DeInit(RFID_DMA_CH2_DEF);
+
     furi_hal_bus_disable(FURI_HAL_RFID_EMULATE_TIMER_BUS);
+
     FURI_CRITICAL_EXIT();
 }
 
