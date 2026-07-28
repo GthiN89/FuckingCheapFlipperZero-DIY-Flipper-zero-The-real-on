@@ -287,7 +287,7 @@ void furi_hal_rfid_tim_emulate_dma_start(
             }
         }
         // Optionally add a short pause between repetitions (redundant, but can be tuned)
-        // furi_delay_us(100);
+         furi_delay_us(100);
     }
 
     // --- Cleanup on stop ---
