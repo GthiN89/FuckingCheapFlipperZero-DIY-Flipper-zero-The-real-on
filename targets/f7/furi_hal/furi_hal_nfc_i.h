@@ -59,6 +59,7 @@ typedef struct {
     FuriMutex* mutex; /**< Pointer to the mutex serving as global NFC HAL lock. */
     FuriHalNfcMode mode; /**< Currently selected operating mode. */
     FuriHalNfcTech tech; /**< Currently selected NFC technology. */
+    uint32_t lock_count; /**< Recursive lock count. */
 } FuriHalNfc;
 
 /**

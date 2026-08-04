@@ -132,6 +132,17 @@ FuriHalNfcError furi_hal_nfc_acquire(void);
 FuriHalNfcError furi_hal_nfc_release(void);
 
 /**
+ * @brief Check whether the current thread owns the NFC HAL lock.
+ *
+ * Useful to make acquire/release idempotent across nested call sites: code can
+ * test ownership before acquiring or releasing so it does not double-lock or
+ * release a mutex it never owned.
+ *
+ * @returns true if the calling thread currently holds the NFC lock.
+ */
+bool furi_hal_nfc_is_mine(void);
+
+/**
  * @brief Configure the NFC hardware to enter the low-power mode.
  *
  * This function must be called each time when the user code is done working

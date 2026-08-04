@@ -1595,6 +1595,7 @@ Function,+,furi_hal_nfc_field_detect_stop,FuriHalNfcError,
 Function,+,furi_hal_nfc_field_is_present,_Bool,
 Function,+,furi_hal_nfc_init,FuriHalNfcError,
 Function,+,furi_hal_nfc_is_hal_ready,FuriHalNfcError,
+Function,+,furi_hal_nfc_is_mine,_Bool,
 Function,+,furi_hal_nfc_iso14443a_listener_set_col_res_data,FuriHalNfcError,"uint8_t*, uint8_t, uint8_t*, uint8_t"
 Function,+,furi_hal_nfc_iso14443a_listener_tx_custom_parity,FuriHalNfcError,"const uint8_t*, const uint8_t*, size_t"
 Function,+,furi_hal_nfc_iso14443a_poller_trx_short_frame,FuriHalNfcError,FuriHalNfcaShortFrame

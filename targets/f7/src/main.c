@@ -48,17 +48,17 @@ int main(void) {
     furi_delay_ms(100);
     furi_hal_mcp23017_read_gpio(&current_bits);
       furi_delay_ms(100);
-  //  bool left_pressed = !(current_bits & BUTTON_LEFT_BIT);
+    bool left_pressed = !(current_bits & BUTTON_LEFT_BIT);
     bool up_pressed   = !(current_bits & BUTTON_UP_BIT);
 
     FuriHalRtcBootMode boot_mode = furi_hal_rtc_get_boot_mode();
-    // if(boot_mode == FuriHalRtcBootModeDfu || left_pressed) {
-    //     furi_hal_light_sequence("rgb WB");
-    //     furi_hal_rtc_set_boot_mode(FuriHalRtcBootModeNormal);
-    //     flipper_boot_dfu_exec();
-    //     furi_hal_power_reset();
-    // } 
-    //else 
+    if(boot_mode == FuriHalRtcBootModeDfu || left_pressed) {
+        furi_hal_light_sequence("rgb WB");
+        furi_hal_rtc_set_boot_mode(FuriHalRtcBootModeNormal);
+        flipper_boot_dfu_exec();
+        furi_hal_power_reset();
+    } 
+    else 
     if(boot_mode == FuriHalRtcBootModeUpdate) {
         furi_hal_light_sequence("rgb BR");
         // Do update
