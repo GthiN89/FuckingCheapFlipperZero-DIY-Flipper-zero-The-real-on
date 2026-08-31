@@ -93,16 +93,16 @@ static const uint8_t u8x8_d_st756x_powersave1_seq[] = {
 
 static const uint8_t u8x8_d_st756x_flip0_seq[] = {
     U8X8_START_TRANSFER(), /* enable chip, delay is part of the transfer start */
-    U8X8_C(0x0a0), /* segment remap a0/a1*/
-    U8X8_C(0x0c8), /* c0: scan dir normal, c8: reverse */
+    U8X8_C(0x0a1), /* segment remap a0/a1*/
+    U8X8_C(0x0c0), /* c0: scan dir normal, c8: reverse */
     U8X8_END_TRANSFER(), /* disable chip */
     U8X8_END() /* end of sequence */
 };
 
 static const uint8_t u8x8_d_st756x_flip1_seq[] = {
     U8X8_START_TRANSFER(), /* enable chip, delay is part of the transfer start */
-    U8X8_C(0x0a1), /* segment remap a0/a1*/
-    U8X8_C(0x0c0), /* c0: scan dir normal, c8: reverse */
+    U8X8_C(0x0a0), /* segment remap a0/a1*/
+    U8X8_C(0x0c8), /* c0: scan dir normal, c8: reverse */
     U8X8_END_TRANSFER(), /* disable chip */
     U8X8_END() /* end of sequence */
 };
@@ -125,8 +125,8 @@ static const u8x8_display_info_t u8x8_st756x_128x64_display_info = {
     .write_pulse_width_ns = 80, /* st7565 datasheet, table 24, tcclw */
     .tile_width = 16, /* width of 16*8=128 pixel */
     .tile_height = 8,
-    .default_x_offset = 4,
-    .flipmode_x_offset = 0,
+    .default_x_offset = 0,
+    .flipmode_x_offset = 4,
     .pixel_width = 128,
     .pixel_height = 64};
 
@@ -197,7 +197,7 @@ void u8x8_d_st756x_init(u8x8_t* u8x8, uint8_t contrast, uint8_t regulation_ratio
     u8x8_cad_SendCmd(u8x8, ST756X_CMD_BIAS_SELECT | bias);
     // Page, Line and Segment config
     u8x8_cad_SendCmd(u8x8, ST756X_CMD_SEG_DIRECTION);
-    u8x8_cad_SendCmd(u8x8, ST756X_CMD_COM_DIRECTION | 0b0000);
+    u8x8_cad_SendCmd(u8x8, ST756X_CMD_COM_DIRECTION | 0b1000);
     u8x8_cad_SendCmd(u8x8, ST756X_CMD_SET_LINE);
     // Set Regulation Ratio
     u8x8_cad_SendCmd(u8x8, ST756X_CMD_REGULATION_RATIO | regulation_ratio);

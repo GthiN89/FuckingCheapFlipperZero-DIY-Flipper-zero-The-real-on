@@ -180,15 +180,15 @@ const InputPin input_pins[] = {
 
 const size_t input_pins_count = 8;
 
-// static void furi_hal_resources_init_input_pins(GpioMode mode) {
-//     for(size_t i = 0; i < input_pins_count; i++) {
-//         furi_hal_gpio_init(
-//             input_pins[i].gpio,
-//             mode,
-//             (input_pins[i].inverted) ? GpioPullUp : GpioPullDown,
-//             GpioSpeedLow);
-//     }
-// }
+static void furi_hal_resources_init_input_pins(GpioMode mode) {
+    for(size_t i = 0; i < input_pins_count; i++) {
+        furi_hal_gpio_init(
+            input_pins[i].gpio,
+            mode,
+            GpioPullNo,
+            GpioSpeedLow);
+    }
+}
 
  static void furi_hal_resources_init_gpio_pins(GpioMode mode) {
      for(size_t i = 0; i < gpio_pins_count; i++) {
@@ -247,7 +247,7 @@ void furi_hal_resources_init_early(void) {
 }
 
 void furi_hal_resources_deinit_early(void) {
-    //furi_hal_resources_init_input_pins(GpioModeAnalog);
+    furi_hal_resources_init_input_pins(GpioModeAnalog);
     furi_hal_bus_disable(FuriHalBusGPIOA);
     furi_hal_bus_disable(FuriHalBusGPIOB);
     furi_hal_bus_disable(FuriHalBusGPIOC);
@@ -257,6 +257,8 @@ void furi_hal_resources_deinit_early(void) {
 }
 
 void furi_hal_resources_init(void) {
+      furi_hal_resources_init_input_pins(GpioModeAnalog);
+      furi_hal_gpio_init(&gpio_button_IRQ, GpioModeInterruptRiseFall, GpioPullDown, GpioSpeedLow);
     // Button pins
  //   furi_hal_resources_init_input_pins(GpioModeInterruptRiseFall);
 
